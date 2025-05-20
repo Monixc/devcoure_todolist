@@ -1,0 +1,113 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model personal_todos {
+  id          Int       @id @default(autoincrement())
+  fk_user_id  Int
+  title       String    @db.VarChar(255)
+  isCompleted Boolean?  @default(false)
+  created_at  DateTime? @default(now()) @db.Timestamp(0)
+  updated_at  DateTime? @default(now()) @db.Timestamp(0)
+  users       users     @relation(fields: [fk_user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "personal_todos_ibfk_1")
+
+  @@index([fk_user_id], map: "fk_user_id")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model team_invitations {
+  id                                          String                   @id @db.Char(36)
+  fk_team_id                                  Int
+  fk_invited_by                               Int
+  fk_user_id                                  Int
+  role                                        team_invitations_role    @default(member)
+  status                                      team_invitations_status? @default(pending)
+  created_at                                  DateTime?                @default(now()) @db.Timestamp(0)
+  expires_at                                  DateTime                 @db.Timestamp(0)
+  accepted_at                                 DateTime?                @db.Timestamp(0)
+  teams                                       teams                    @relation(fields: [fk_team_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "team_invitations_ibfk_1")
+  users_team_invitations_fk_invited_byTousers users                    @relation("team_invitations_fk_invited_byTousers", fields: [fk_invited_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "team_invitations_ibfk_2")
+  users_team_invitations_fk_user_idTousers    users                    @relation("team_invitations_fk_user_idTousers", fields: [fk_user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "team_invitations_ibfk_3")
+
+  @@index([fk_invited_by], map: "fk_invited_by")
+  @@index([fk_team_id], map: "fk_team_id")
+  @@index([fk_user_id], map: "fk_user_id")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model team_members {
+  id         Int               @id @default(autoincrement())
+  fk_user_id Int
+  fk_team_id Int
+  role       team_members_role
+  joined_at  DateTime?         @default(now()) @db.Timestamp(0)
+  users      users             @relation(fields: [fk_user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "team_members_ibfk_1")
+  teams      teams             @relation(fields: [fk_team_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "team_members_ibfk_2")
+
+  @@unique([fk_team_id, fk_user_id], map: "unique_team_member")
+  @@index([fk_user_id], map: "fk_user_id")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model team_todos {
+  id          Int       @id @default(autoincrement())
+  fk_team_id  Int
+  title       String    @db.VarChar(255)
+  isCompleted Boolean?  @default(false)
+  created_at  DateTime? @default(now()) @db.Timestamp(0)
+  updated_at  DateTime? @default(now()) @db.Timestamp(0)
+  teams       teams     @relation(fields: [fk_team_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "team_todos_ibfk_1")
+
+  @@index([fk_team_id], map: "fk_team_id")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model teams {
+  id               Int                @id @default(autoincrement())
+  teamName         String             @unique(map: "teamName") @db.VarChar(255)
+  fk_created_by    Int
+  created_at       DateTime?          @default(now()) @db.Timestamp(0)
+  updated_at       DateTime?          @default(now()) @db.Timestamp(0)
+  team_invitations team_invitations[]
+  team_members     team_members[]
+  team_todos       team_todos[]
+  users            users              @relation(fields: [fk_created_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "teams_ibfk_1")
+
+  @@index([fk_created_by], map: "fk_created_by")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model users {
+  id                                                     Int                @id @default(autoincrement())
+  userId                                                 String             @unique(map: "userId") @db.VarChar(255)
+  passwordHash                                           String             @db.VarChar(255)
+  created_at                                             DateTime?          @default(now()) @db.Timestamp(0)
+  updated_at                                             DateTime?          @default(now()) @db.Timestamp(0)
+  personal_todos                                         personal_todos[]
+  team_invitations_team_invitations_fk_invited_byTousers team_invitations[] @relation("team_invitations_fk_invited_byTousers")
+  team_invitations_team_invitations_fk_user_idTousers    team_invitations[] @relation("team_invitations_fk_user_idTousers")
+  team_members                                           team_members[]
+  teams                                                  teams[]
+}
+
+enum team_members_role {
+  leader
+  member
+}
+
+enum team_invitations_role {
+  leader
+  member
+}
+
+enum team_invitations_status {
+  pending
+  accepted
+  rejected
+}
