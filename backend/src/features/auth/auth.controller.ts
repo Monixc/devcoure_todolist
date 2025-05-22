@@ -93,12 +93,4 @@ const refresh = async (req: Request, res: Response) => {
   }
 };
 
-// const sendEmai = (req: Request, res: Response) => {};
-
-// const isEmailVerified = (req: Request, res: Response) => {};
-
-// const getEmailStatus = (req: Request, res: Response) => {};
-
-// const isValidEmail = (req: Request, res: Response) => {};
-
 export { join, login, refresh };
