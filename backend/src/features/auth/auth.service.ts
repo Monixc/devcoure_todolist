@@ -60,11 +60,9 @@ const loginUser = async ({ userId, password }: LoginUserDto) => {
     throw new Error(AUTH_CONSTANTS.LOGIN.ERROR_MESSAGES.INVALID_CREDENTIALS);
   }
 
-  const accessToken = jwt.sign(
-    { id: user.id },
-    process.env.JWT_SECRET as string,
-    { expiresIn: AUTH_CONSTANTS.TOKEN_EXPIRY } as jwt.SignOptions
-  );
+  const accessToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET!, {
+    expiresIn: AUTH_CONSTANTS.TOKEN_EXPIRY,
+  } as jwt.SignOptions);
 
   const { passwordHash: _, ...userWithoutPassword } = user;
 
@@ -74,4 +72,27 @@ const loginUser = async ({ userId, password }: LoginUserDto) => {
   };
 };
 
-export { joinUser, loginUser };
+const getRefreshToken = async (userId: string) => {
+  const user = await prisma.users.findUnique({
+    where: { userId },
+  });
+
+  if (!user) {
+    throw new Error(AUTH_CONSTANTS.LOGIN.ERROR_MESSAGES.USER_NOT_FOUND);
+  }
+
+  const refreshToken = jwt.sign(
+    { id: user.id },
+    process.env.JWT_REFRESH_SECRET!,
+    { expiresIn: AUTH_CONSTANTS.REFRESH_TOKEN_EXPIRY } as jwt.SignOptions
+  );
+
+  await prisma.users.update({
+    where: { userId },
+    data: { refresh_token: refreshToken },
+  });
+
+  return refreshToken;
+};
+
+export { joinUser, loginUser, getRefreshToken };

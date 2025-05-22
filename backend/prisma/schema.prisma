@@ -89,6 +89,7 @@ model users {
   passwordHash                                           String             @db.VarChar(255)
   created_at                                             DateTime?          @default(now()) @db.Timestamp(0)
   updated_at                                             DateTime?          @default(now()) @db.Timestamp(0)
+  refresh_token                                          String?            @db.VarChar(255)
   personal_todos                                         personal_todos[]
   team_invitations_team_invitations_fk_invited_byTousers team_invitations[] @relation("team_invitations_fk_invited_byTousers")
   team_invitations_team_invitations_fk_user_idTousers    team_invitations[] @relation("team_invitations_fk_user_idTousers")

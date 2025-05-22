@@ -1,10 +1,13 @@
-import express, { RequestHandler } from "express";
+import express from "express";
 import * as authController from "./auth.controller";
 
 const authRouter = express.Router();
 
+// @ts-ignorets
 authRouter.post("/join", authController.join);
+// @ts-ignorets
 authRouter.post("/login", authController.login);
+// @ts-ignorets
 authRouter.post("/refresh", authController.getRefreshToken);
 
 // authRouter.post("/email/send", authController.sendEmai);
