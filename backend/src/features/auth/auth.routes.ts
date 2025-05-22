@@ -8,7 +8,7 @@ authRouter.post("/join", authController.join);
 // @ts-ignorets
 authRouter.post("/login", authController.login);
 // @ts-ignorets
-authRouter.post("/refresh", authController.getRefreshToken);
+authRouter.post("/refresh", authController.refresh);
 
 // authRouter.post("/email/send", authController.sendEmai);
 // authRouter.post("/email/verify", authController.isEmailVerified);

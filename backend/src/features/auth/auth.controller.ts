@@ -75,14 +75,14 @@ const login = async (req: Request, res: Response) => {
   }
 };
 
-const getRefreshToken = async (req: Request, res: Response) => {
+const refresh = async (req: Request, res: Response) => {
   try {
-    const { userId } = req.body;
-    const refreshToken = await authService.getRefreshToken(userId);
+    const { refreshToken } = req.body;
+    const newTokens = await authService.refresh(refreshToken);
 
     return res.status(StatusCodes.OK).json({
       success: true,
-      refreshToken,
+      data: newTokens,
     });
   } catch (error) {
     console.log(error);
@@ -101,4 +101,4 @@ const getRefreshToken = async (req: Request, res: Response) => {
 
 // const isValidEmail = (req: Request, res: Response) => {};
 
-export { join, login, getRefreshToken };
+export { join, login, refresh };
