@@ -1,6 +1,6 @@
 import express from "express";
-import { prisma, connectDB } from "./config/db.js";
-import authRouter from "./features/auth/auth.routes.js";
+import { connectDB } from "./config/db";
+import authRouter from "./features/auth/auth.routes";
 
 const app = express();
 
