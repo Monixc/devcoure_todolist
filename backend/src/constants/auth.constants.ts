@@ -1,7 +1,7 @@
 export const AUTH_CONSTANTS = {
   SALT_ROUNDS: 10,
   PASSWORD_MIN_LENGTH: 8,
-  TOKEN_EXPIRY: "24h",
+  TOKEN_EXPIRY: "1h",
   EMAIL: {
     EMAIL_REGEX: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
     ERROR_MESSAGES: {

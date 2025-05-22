@@ -1,9 +1,10 @@
-import { AUTH_CONSTANTS } from "../../../constants/auth.constants.js";
+import { AUTH_CONSTANTS } from "../../../constants/auth.constants";
 
-export const validateEmail = (email: string) => {
+export const validateEmail = (email: string): void => {
   const { EMAIL } = AUTH_CONSTANTS;
+  const emailRegex = EMAIL.EMAIL_REGEX;
 
-  if (!EMAIL.EMAIL_REGEX.test(email)) {
+  if (!emailRegex.test(email)) {
     throw new Error(EMAIL.ERROR_MESSAGES.INVALID_EMAIL);
   }
 };

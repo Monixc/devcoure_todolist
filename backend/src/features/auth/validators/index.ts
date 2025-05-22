@@ -1,2 +1,2 @@
-export * from "./email.validators.js";
-export * from "./password.validators.js";
+export * from "./email.validators";
+export * from "./password.validators";

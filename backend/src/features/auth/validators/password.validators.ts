@@ -1,6 +1,6 @@
-import { AUTH_CONSTANTS } from "../../../constants/auth.constants.js";
+import { AUTH_CONSTANTS } from "../../../constants/auth.constants";
 
-export const validatePassword = (password: string, email: string) => {
+export const validatePassword = (password: string, email: string): void => {
   const { PASSWORD } = AUTH_CONSTANTS;
 
   if (password.length < PASSWORD.MIN_LENGTH) {
@@ -18,8 +18,7 @@ export const validatePassword = (password: string, email: string) => {
     throw new Error(PASSWORD.ERROR_MESSAGES.NO_SPECIAL);
   }
 
-  const emailPrefix = email.split("@")[0].toLowerCase();
-  if (password.toLowerCase().includes(emailPrefix)) {
+  if (email && password.includes(email)) {
     throw new Error(PASSWORD.ERROR_MESSAGES.CONTAINS_EMAIL);
   }
 
