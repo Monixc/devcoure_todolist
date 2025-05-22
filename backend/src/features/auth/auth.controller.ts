@@ -77,26 +77,12 @@ const login = async (req: Request, res: Response) => {
 
 const getRefreshToken = (req: Request, res: Response) => {};
 
-const logout = (req: Request, res: Response) => {};
+// const sendEmai = (req: Request, res: Response) => {};
 
-const getSession = (req: Request, res: Response) => {};
+// const isEmailVerified = (req: Request, res: Response) => {};
 
-const sendEmai = (req: Request, res: Response) => {};
+// const getEmailStatus = (req: Request, res: Response) => {};
 
-const isEmailVerified = (req: Request, res: Response) => {};
+// const isValidEmail = (req: Request, res: Response) => {};
 
-const getEmailStatus = (req: Request, res: Response) => {};
-
-const isValidEmail = (req: Request, res: Response) => {};
-
-export {
-  join,
-  login,
-  getRefreshToken,
-  logout,
-  getSession,
-  sendEmai,
-  isEmailVerified,
-  getEmailStatus,
-  isValidEmail,
-};
+export { join, login, getRefreshToken };
