@@ -58,12 +58,12 @@ const loginUser = async ({ userId, password }: LoginUserDto) => {
     });
 
     if (!user) {
-      throw new Error("존재하지 않는 사용자입니다.");
+      throw new Error(AUTH_CONSTANTS.LOGIN.ERROR_MESSAGES.USER_NOT_FOUND);
     }
 
     const isValidPassword = await bcrypt.compare(password, user.passwordHash);
     if (!isValidPassword) {
-      throw new Error("비밀번가 일치하지 않습니다");
+      throw new Error(AUTH_CONSTANTS.LOGIN.ERROR_MESSAGES.INVALID_CREDENTIALS);
     }
 
     const accessToken = jwt.sign(

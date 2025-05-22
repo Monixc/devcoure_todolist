@@ -25,4 +25,12 @@ export const AUTH_CONSTANTS = {
       CONTAINS_EMAIL: "비밀번호에 이메일 주소를 포함할 수 없습니다.",
     },
   },
+  LOGIN: {
+    ERROR_MESSAGES: {
+      USER_NOT_FOUND: "존재하지 않는 사용자입니다.",
+      INVALID_CREDENTIALS: "비밀번호가 일치하지 않습니다.",
+      INTERNAL_SERVER_ERROR: "로그인 중 오류가 발생했습니다.",
+      MISSING_CREDENTIALS: "아이디와 비밀번호를 입력해주세요.",
+    },
+  },
 };
