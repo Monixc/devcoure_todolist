@@ -3,8 +3,8 @@ import * as authController from "./auth.controller";
 
 const authRouter = express.Router();
 
-authRouter.post("/join", authController.join as unknown as RequestHandler);
-authRouter.post("/login", authController.login as unknown as RequestHandler);
+authRouter.post("/join", authController.join);
+authRouter.post("/login", authController.login);
 authRouter.post("/refresh", authController.getRefreshToken);
 authRouter.post("/logout", authController.logout);
 authRouter.get("/session-check", authController.getSession);

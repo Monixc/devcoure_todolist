@@ -8,7 +8,7 @@ const join = async (req: Request, res: Response) => {
     const userData = req.body;
     const user = await authService.joinUser(userData);
 
-    return res.status(StatusCodes.CREATED).json({
+    res.status(StatusCodes.CREATED).json({
       success: true,
       data: user,
     });
@@ -17,19 +17,19 @@ const join = async (req: Request, res: Response) => {
       if (
         error.message === AUTH_CONSTANTS.EMAIL.ERROR_MESSAGES.DUPLICATE_EMAIL
       ) {
-        return res.status(StatusCodes.CONFLICT).json({
+        res.status(StatusCodes.CONFLICT).json({
           success: false,
           message: error.message,
         });
       }
 
-      return res.status(StatusCodes.BAD_REQUEST).json({
+      res.status(StatusCodes.BAD_REQUEST).json({
         success: false,
         message: error.message,
       });
     }
 
-    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: "알 수 없는 오류가 발생했습니다",
     });
@@ -40,14 +40,14 @@ const login = async (req: Request, res: Response) => {
   try {
     const { userId, password } = req.body;
     if (!userId || !password) {
-      return res.status(StatusCodes.BAD_REQUEST).json({
+      res.status(StatusCodes.BAD_REQUEST).json({
         success: false,
         message: AUTH_CONSTANTS.LOGIN.ERROR_MESSAGES.MISSING_CREDENTIALS,
       });
     }
 
     const user = await authService.loginUser({ userId, password });
-    return res.status(StatusCodes.OK).json({
+    res.status(StatusCodes.OK).json({
       success: true,
       data: user,
     });
@@ -58,17 +58,17 @@ const login = async (req: Request, res: Response) => {
         error.message ===
           AUTH_CONSTANTS.LOGIN.ERROR_MESSAGES.INVALID_CREDENTIALS
       ) {
-        return res.status(StatusCodes.UNAUTHORIZED).json({
+        res.status(StatusCodes.UNAUTHORIZED).json({
           success: false,
           message: error.message,
         });
       }
-      return res.status(StatusCodes.BAD_REQUEST).json({
+      res.status(StatusCodes.BAD_REQUEST).json({
         success: false,
         message: error.message,
       });
     }
-    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: "알 수 없는 오류가 발생했습니다.",
     });
