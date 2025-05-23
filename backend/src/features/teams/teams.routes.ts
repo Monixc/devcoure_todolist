@@ -9,9 +9,9 @@ teamsRouter.post("/", authMiddleware, teamsController.createTeam);
 teamsRouter.post("/:teamId/invite", authMiddleware, isTeamLeader, teamsController.inviteTeam);
 teamsRouter.post("/invitations/:inviteId/accept", authMiddleware, teamsController.acceptInvite);
 teamsRouter.post("/invitations/:inviteId/reject", authMiddleware, teamsController.rejectInvite);
-// teamsRouter.post("/:teamId/leave");
-// teamsRouter.delete("/:teamId");
-// teamsRouter.patch("/:teamId");
-// teamsRouter.delete("/:teamId/members/:memberId");
+teamsRouter.post("/:teamId/leave", authMiddleware, teamsController.leaveTeam);
+teamsRouter.delete("/:teamId", authMiddleware, isTeamLeader, teamsController.deleteTeam);
+teamsRouter.patch("/:teamId", authMiddleware, isTeamLeader, teamsController.updateTeam);
+teamsRouter.delete("/:teamId/members/:userId", authMiddleware, isTeamLeader, teamsController.kickMember);
 
 export default teamsRouter;
