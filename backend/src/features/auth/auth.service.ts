@@ -60,12 +60,12 @@ const loginUser = async ({ userId, password }: LoginUserDto) => {
     throw new Error(AUTH_CONSTANTS.LOGIN.ERROR_MESSAGES.INVALID_CREDENTIALS);
   }
 
-  const accessToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET!, {
+  const accessToken = jwt.sign({ id: user.userId }, process.env.JWT_SECRET!, {
     expiresIn: AUTH_CONSTANTS.TOKEN_EXPIRY,
   } as jwt.SignOptions);
 
   const refreshToken = jwt.sign(
-    { id: user.id },
+    { id: user.userId },
     process.env.JWT_REFRESH_SECRET!,
     { expiresIn: AUTH_CONSTANTS.REFRESH_TOKEN_EXPIRY } as jwt.SignOptions
   );
@@ -93,18 +93,22 @@ const refresh = async (refreshToken: string) => {
   }
 
   const user = await prisma.users.findUnique({
-    where: { id: payload.id },
+    where: { userId: payload.id },
   });
   if (!user || user.refresh_token !== refreshToken) {
     throw new Error("유효하지 않은 리프레시 토큰");
   }
 
-  const newAccessToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET!, {
-    expiresIn: AUTH_CONSTANTS.TOKEN_EXPIRY,
-  } as jwt.SignOptions);
+  const newAccessToken = jwt.sign(
+    { id: user.userId },
+    process.env.JWT_SECRET!,
+    {
+      expiresIn: AUTH_CONSTANTS.TOKEN_EXPIRY,
+    } as jwt.SignOptions
+  );
 
   const newRefreshToken = jwt.sign(
-    { id: user.id },
+    { id: user.userId },
     process.env.JWT_REFRESH_SECRET!,
     { expiresIn: AUTH_CONSTANTS.REFRESH_TOKEN_EXPIRY } as jwt.SignOptions
   );

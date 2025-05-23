@@ -3,8 +3,9 @@ export interface User {
   id: number;
   userId: string;
   passwordHash: string;
-  created_at: Date;
-  updated_at?: Date;
+  created_at: Date | null;
+  updated_at: Date | null;
+  refreshToken?: string | null;
 }
 
 export type UserWithoutPassword = Omit<User, "passwordHash">;

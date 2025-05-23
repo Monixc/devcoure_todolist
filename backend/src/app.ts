@@ -1,6 +1,7 @@
 import express from "express";
 import { connectDB } from "./config/db";
 import authRouter from "./features/auth/auth.routes";
+import teamsRouter from "./features/teams/teams.routes";
 
 const app = express();
 
@@ -8,6 +9,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/auth", authRouter);
+app.use("/teams", teamsRouter);
 
 // 루트 경로 처리
 app.get("/", (req, res) => {
