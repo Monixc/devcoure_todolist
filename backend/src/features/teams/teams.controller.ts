@@ -20,6 +20,7 @@ const createTeam = async (req: Request, res: Response) => {
     res.status(StatusCodes.CREATED).json({
       team,
       teamLeader,
+      message: TEAMS_CONSTANTS.INVITATION.MESSAGES.TEAM_CREATED,
     });
   } catch (error: any) {
     res.status(StatusCodes.BAD_REQUEST).json({
@@ -48,6 +49,7 @@ const inviteTeam = async (req: Request, res: Response) => {
 
     res.status(StatusCodes.CREATED).json({
       invitation,
+      message: TEAMS_CONSTANTS.INVITATION.MESSAGES.TEAM_INVITED,
     });
   } catch (error: any) {
     res.status(StatusCodes.BAD_REQUEST).json({
@@ -72,7 +74,10 @@ const acceptInvite = async (req: Request, res: Response) => {
       inviteId, 
       userId: user.userId 
     });
-    res.status(StatusCodes.OK).json(result);
+    res.status(StatusCodes.OK).json({
+      result,
+      message: TEAMS_CONSTANTS.INVITATION.MESSAGES.INVITE_ACCEPTED,
+    });
   } catch (error: any) {
     res.status(StatusCodes.BAD_REQUEST).json({
       message: error.message
@@ -96,7 +101,10 @@ const rejectInvite = async (req: Request, res: Response) => {
       inviteId, 
       userId: user.userId 
     });
-    res.status(StatusCodes.OK).json(result);
+    res.status(StatusCodes.OK).json({
+      result,
+      message: TEAMS_CONSTANTS.INVITATION.MESSAGES.INVITE_REJECTED,
+    });
   } catch (error: any) {
     res.status(StatusCodes.BAD_REQUEST).json({
       message: error.message
@@ -151,7 +159,10 @@ const updateTeam = async (req: Request, res: Response) => {
   
   try {
     const updatedTeam = await teamsService.updateTeam(Number(teamId), { teamName });
-    res.status(StatusCodes.OK).json(updatedTeam);
+    res.status(StatusCodes.OK).json({
+      updatedTeam,
+      message: TEAMS_CONSTANTS.INVITATION.MESSAGES.TEAM_UPDATED,
+    });
   } catch (error: any) {
     res.status(StatusCodes.BAD_REQUEST).json({
       message: error.message
@@ -182,7 +193,10 @@ const getTeamMembers = async (req: Request, res: Response) => {
   
   try {
     const members = await teamsService.getTeamMembers(Number(teamId));
-    res.status(StatusCodes.OK).json(members);
+    res.status(StatusCodes.OK).json({
+      members,
+      message: TEAMS_CONSTANTS.INVITATION.MESSAGES.TEAM_MEMBERS_FETCHED,
+    });
   } catch (error: any) {
     res.status(StatusCodes.BAD_REQUEST).json({
       message: error.message
