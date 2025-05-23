@@ -1,31 +1,59 @@
 import { Request, Response } from "express";
 import * as teamsService from "./teams.service";
 import { StatusCodes } from "http-status-codes";
+import { TEAMS_CONSTANTS } from "../../constants/teams.constants";
+
 
 const createTeam = async (req: Request, res: Response) => {
   const { teamName } = req.body;
   const user = req.user;
-  
 
-  const { team, teamLeader } = await teamsService.createTeam(teamName, user);
+  if (!user) {
+    res.status(StatusCodes.UNAUTHORIZED).json({
+      message: TEAMS_CONSTANTS.INVITATION.ERROR_MESSAGES.UNAUTHORIZED,
+    });
+    return;
+  }
 
-  res.status(StatusCodes.CREATED).json({
-    team,
-    teamLeader,
-  });
+  try {
+    const { team, teamLeader } = await teamsService.createTeam({ teamName }, user);
+    res.status(StatusCodes.CREATED).json({
+      team,
+      teamLeader,
+    });
+  } catch (error: any) {
+    res.status(StatusCodes.BAD_REQUEST).json({
+      message: error.message
+    });
+  }
 };
 
-
 const inviteTeam = async (req: Request, res: Response) => {
-  const {teamId} = req.params;
-  const {invitedUserId } = req.body;
+  const { teamId } = req.params;
+  const { invitedUserId } = req.body;
   const invitedBy = req.user;
 
-  const invitation = await teamsService.inviteTeam(Number(teamId), invitedUserId, invitedBy);
+  if (!invitedBy) {
+    res.status(StatusCodes.UNAUTHORIZED).json({
+      message: TEAMS_CONSTANTS.INVITATION.ERROR_MESSAGES.UNAUTHORIZED,
+    });
+    return;
+  }
 
-  res.status(StatusCodes.CREATED).json({
-    invitation,
-  });
+  try {
+    const invitation = await teamsService.inviteTeam({ 
+      teamId: Number(teamId), 
+      invitedUserId 
+    }, invitedBy);
+
+    res.status(StatusCodes.CREATED).json({
+      invitation,
+    });
+  } catch (error: any) {
+    res.status(StatusCodes.BAD_REQUEST).json({
+      message: error.message
+    });
+  }
 };
 
 const acceptInvite = async (req: Request, res: Response) => {
@@ -34,13 +62,16 @@ const acceptInvite = async (req: Request, res: Response) => {
 
   if (!user) {
     res.status(StatusCodes.UNAUTHORIZED).json({
-      message: "로그인이 필요합니다.",
+      message: TEAMS_CONSTANTS.INVITATION.ERROR_MESSAGES.UNAUTHORIZED,
     });
     return;
   }
 
   try {
-    const result = await teamsService.acceptInvite(inviteId, user.userId);
+    const result = await teamsService.acceptInvite({ 
+      inviteId, 
+      userId: user.userId 
+    });
     res.status(StatusCodes.OK).json(result);
   } catch (error: any) {
     res.status(StatusCodes.BAD_REQUEST).json({
@@ -55,13 +86,16 @@ const rejectInvite = async (req: Request, res: Response) => {
 
   if (!user) {
     res.status(StatusCodes.UNAUTHORIZED).json({
-      message: "로그인이 필요합니다.",
+      message: TEAMS_CONSTANTS.INVITATION.ERROR_MESSAGES.UNAUTHORIZED,
     });
     return;
   }
 
   try {
-    const result = await teamsService.rejectInvite(inviteId, user.userId);
+    const result = await teamsService.rejectInvite({ 
+      inviteId, 
+      userId: user.userId 
+    });
     res.status(StatusCodes.OK).json(result);
   } catch (error: any) {
     res.status(StatusCodes.BAD_REQUEST).json({
@@ -76,15 +110,18 @@ const leaveTeam = async (req: Request, res: Response) => {
 
   if (!user) {
     res.status(StatusCodes.UNAUTHORIZED).json({
-      message: "로그인이 필요합니다.",
+      message: TEAMS_CONSTANTS.INVITATION.ERROR_MESSAGES.UNAUTHORIZED,
     });
     return;
   }
 
   try {
-    await teamsService.leaveTeam(Number(teamId), user.userId);
+    await teamsService.leaveTeam({ 
+      teamId: Number(teamId), 
+      userId: user.userId 
+    });
     res.status(StatusCodes.OK).json({
-      message: "팀을 탈퇴했습니다.",
+      message: TEAMS_CONSTANTS.INVITATION.MESSAGES.TEAM_LEAVE,
     });
   } catch (error: any) {
     res.status(StatusCodes.BAD_REQUEST).json({
@@ -99,7 +136,7 @@ const deleteTeam = async (req: Request, res: Response) => {
   try {
     await teamsService.deleteTeam(Number(teamId));
     res.status(StatusCodes.OK).json({
-      message: "팀이 삭제되었습니다.",
+      message: TEAMS_CONSTANTS.INVITATION.MESSAGES.TEAM_DELETED,
     });
   } catch (error: any) {
     res.status(StatusCodes.BAD_REQUEST).json({
@@ -113,7 +150,7 @@ const updateTeam = async (req: Request, res: Response) => {
   const { teamName } = req.body;
   
   try {
-    const updatedTeam = await teamsService.updateTeam(Number(teamId), teamName);
+    const updatedTeam = await teamsService.updateTeam(Number(teamId), { teamName });
     res.status(StatusCodes.OK).json(updatedTeam);
   } catch (error: any) {
     res.status(StatusCodes.BAD_REQUEST).json({
@@ -126,9 +163,12 @@ const kickMember = async (req: Request, res: Response) => {
   const { teamId, memberId } = req.params;
   
   try {
-    await teamsService.kickMember(Number(teamId), Number(memberId));
+    await teamsService.kickMember({ 
+      teamId: Number(teamId), 
+      memberId: Number(memberId) 
+    });
     res.status(StatusCodes.OK).json({
-      message: "멤버가 추방되었습니다.",
+      message: TEAMS_CONSTANTS.INVITATION.MESSAGES.MEMBER_KICKED,
     });
   } catch (error: any) {
     res.status(StatusCodes.BAD_REQUEST).json({
@@ -136,7 +176,6 @@ const kickMember = async (req: Request, res: Response) => {
     });
   }
 };
-
 
 const getTeamMembers = async (req: Request, res: Response) => {
   const { teamId } = req.params;
@@ -151,4 +190,14 @@ const getTeamMembers = async (req: Request, res: Response) => {
   }
 };
 
-export { createTeam, inviteTeam, acceptInvite, rejectInvite, leaveTeam, deleteTeam, updateTeam, kickMember, getTeamMembers };
+export { 
+  createTeam, 
+  inviteTeam, 
+  acceptInvite, 
+  rejectInvite, 
+  leaveTeam, 
+  deleteTeam, 
+  updateTeam, 
+  kickMember, 
+  getTeamMembers 
+};
