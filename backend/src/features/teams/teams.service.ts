@@ -251,6 +251,36 @@ const kickMember = async (teamId: number, memberId: number) => {
   });
 };
 
+const getMembers = async (teamId: number) => {
+  return await prisma.team_members.findMany({
+    where: { fk_team_id: teamId }
+  });
+};
+
+const getTeamMembers = async (teamId: number) => {
+  const team = await prisma.teams.findUnique({
+    where: { id: teamId },
+    include: {
+      team_members: {
+        include: {
+          users: {
+            select: {
+              id: true,
+              userId: true,
+            }
+          }
+        }
+      }
+    }
+  });
+
+  if (!team) {
+    throw new Error("팀을 찾을 수 없습니다");
+  }
+
+  return team.team_members;
+};
+
 export {
   createTeam,
   inviteTeam,
@@ -260,4 +290,5 @@ export {
   deleteTeam,
   updateTeam,
   kickMember,
+  getTeamMembers,
 };

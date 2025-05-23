@@ -137,4 +137,18 @@ const kickMember = async (req: Request, res: Response) => {
   }
 };
 
-export { createTeam, inviteTeam, acceptInvite, rejectInvite, leaveTeam, deleteTeam, updateTeam, kickMember };
+
+const getTeamMembers = async (req: Request, res: Response) => {
+  const { teamId } = req.params;
+  
+  try {
+    const members = await teamsService.getTeamMembers(Number(teamId));
+    res.status(StatusCodes.OK).json(members);
+  } catch (error: any) {
+    res.status(StatusCodes.BAD_REQUEST).json({
+      message: error.message
+    });
+  }
+};
+
+export { createTeam, inviteTeam, acceptInvite, rejectInvite, leaveTeam, deleteTeam, updateTeam, kickMember, getTeamMembers };
