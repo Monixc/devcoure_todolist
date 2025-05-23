@@ -5,6 +5,7 @@ import { StatusCodes } from "http-status-codes";
 const createTeam = async (req: Request, res: Response) => {
   const { teamName } = req.body;
   const user = req.user;
+  
 
   const { team, teamLeader } = await teamsService.createTeam(teamName, user);
 
@@ -27,4 +28,58 @@ const inviteTeam = async (req: Request, res: Response) => {
   });
 };
 
-export { createTeam, inviteTeam };
+const acceptInvite = async (req: Request, res: Response) => {
+  const { teamId, inviteId } = req.params;
+  const user = req.user;
+
+  if (!user) {
+    res.status(StatusCodes.UNAUTHORIZED).json({
+      message: "로그인이 필요합니다.",
+    });
+    return;
+  }
+
+  try {
+    const result = await teamsService.acceptInvite(
+      Number(teamId), 
+      inviteId, 
+      user.userId
+    );
+
+    res.status(StatusCodes.OK).json(result);
+  } catch (error: any) {
+    res.status(StatusCodes.BAD_REQUEST).json({
+      message: error.message
+    });
+  }
+};
+
+const rejectInvite = async (req: Request, res: Response) => {
+  const { teamId, inviteId } = req.params;
+  const user = req.user;
+
+  if (!user) {
+    res.status(StatusCodes.UNAUTHORIZED).json({
+      message: "로그인이 필요합니다.",
+    });
+    return;
+  }
+
+  try {
+    const result = await teamsService.rejectInvite(
+      Number(teamId), 
+      inviteId, 
+      user.userId
+    );
+
+    res.status(StatusCodes.OK).json(result);
+  } catch (error: any) {
+    res.status(StatusCodes.BAD_REQUEST).json({
+      message: error.message
+    });
+  }
+}
+
+
+
+export { createTeam, inviteTeam, acceptInvite, rejectInvite };
