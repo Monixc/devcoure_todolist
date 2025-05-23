@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from "express";
 import { StatusCodes } from "http-status-codes";
 import jwt from "jsonwebtoken";
-import { prisma } from "../config/db";
-import { AUTH_CONSTANTS } from "../constants/auth.constants";
-import { JWT_CONFIG } from "../config/jwt.config";
+import { prisma } from "../../config/db";
+import { AUTH_CONSTANTS } from "../../constants/auth.constants";
+import { JWT_CONFIG } from "../../config/jwt.config";
 
 const jwtAuthMiddleware = async (
   req: Request,
@@ -50,5 +50,5 @@ const jwtAuthMiddleware = async (
     return;
   }
 };
-
 export default jwtAuthMiddleware;
+
