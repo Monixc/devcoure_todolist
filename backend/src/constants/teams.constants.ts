@@ -12,6 +12,7 @@ export const TEAMS_CONSTANTS = {
             NOT_TEAM_MEMBER: '팀 멤버가 아닙니다.',
             UNAUTHORIZED: '권한이 없습니다.',
             LEADER_CANNOT_LEAVE: '팀 리더는 탈퇴할 수 없습니다.',
+            ALREADY_INVITED: '이미 초대가 진행중입니다.',
         },
         MESSAGES:{
             TEAM_CREATED: '팀이 생성되었습니다.',

@@ -109,7 +109,7 @@ const inviteTeam = async ({
   });
 
   if (existingInvitation) {
-    throw new Error("이미 초대가 진행중입니다.");
+    throw new Error(TEAMS_CONSTANTS.INVITATION.ERROR_MESSAGES.ALREADY_INVITED);
   }
 
   const expiresAt = new Date();
@@ -214,7 +214,7 @@ const leaveTeam = async ({
   }
 
   if (teamMember.role === 'leader') {
-    throw new Error("팀 리더는 탈퇴할 수 없습니다. 팀을 삭제해주세요.");
+    throw new Error(TEAMS_CONSTANTS.INVITATION.ERROR_MESSAGES.LEADER_CANNOT_LEAVE);
   }
 
   return await prisma.team_members.delete({
