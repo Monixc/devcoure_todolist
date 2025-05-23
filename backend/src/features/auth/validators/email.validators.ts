@@ -5,6 +5,6 @@ export const validateEmail = (email: string): void => {
   const emailRegex = EMAIL.EMAIL_REGEX;
 
   if (!emailRegex.test(email)) {
-    throw new Error(EMAIL.ERROR_MESSAGES.INVALID_EMAIL);
+    throw new Error(AUTH_CONSTANTS.ERROR_MESSAGES.INVALID_EMAIL);
   }
 };

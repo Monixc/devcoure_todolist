@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { StatusCodes } from "http-status-codes";
 import jwt from "jsonwebtoken";
 import { prisma } from "../../config/db";
+import { AUTH_CONSTANTS } from "../../constants/auth.constants";
 
 const authMiddleware = async (
   req: Request,
@@ -12,7 +13,7 @@ const authMiddleware = async (
 
   if (!authorization) {
     res.status(StatusCodes.UNAUTHORIZED).json({
-      message: "토큰이 없습니다.",
+      message: AUTH_CONSTANTS.ERROR_MESSAGES.UNAUTHORIZED,
     });
     return;
   }
@@ -32,7 +33,7 @@ const authMiddleware = async (
 
     if (!user) {
       res.status(StatusCodes.UNAUTHORIZED).json({
-        message: "유저를 찾을 수 없습니다",
+        message: AUTH_CONSTANTS.ERROR_MESSAGES.USER_NOT_FOUND,
       });
       return;
     }
@@ -43,7 +44,7 @@ const authMiddleware = async (
     next();
   } catch (error) {
     res.status(StatusCodes.UNAUTHORIZED).json({
-      message: "유효하지 않은 토큰입니다.",
+      message: AUTH_CONSTANTS.ERROR_MESSAGES.INVALID_TOKEN,
     });
     return;
   }

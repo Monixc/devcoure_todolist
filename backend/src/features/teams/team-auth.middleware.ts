@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import {prisma} from "../../config/db";
 import { StatusCodes } from "http-status-codes";
+import { TEAMS_CONSTANTS } from "../../constants/teams.constants";
 
 const validateUser = async (req: Request, res: Response) => {
   const user = req.user;
@@ -28,7 +29,7 @@ export const isTeamLeader = async (
 
   if(!dbUser) {
     res.status(StatusCodes.UNAUTHORIZED).json({
-      message: "로그인이 필요합니다.",
+      message: TEAMS_CONSTANTS.INVITATION.ERROR_MESSAGES.UNAUTHORIZED,
     });
     return;
   }
@@ -43,7 +44,7 @@ export const isTeamLeader = async (
 
   if (!teamLeader) {
     res.status(StatusCodes.FORBIDDEN).json({
-      message: "팀 리더만 이 작업을 수행할 수 있습니다.",
+      message: TEAMS_CONSTANTS.INVITATION.ERROR_MESSAGES.NOT_TEAM_LEADER,
     });
     return;
   }
@@ -61,7 +62,7 @@ export const isTeamMember = async (
 
   if (!dbUser) {
     res.status(StatusCodes.UNAUTHORIZED).json({
-      message: "로그인이 필요합니다.",
+      message: TEAMS_CONSTANTS.INVITATION.ERROR_MESSAGES.UNAUTHORIZED,
     });
     return;
   }
@@ -75,7 +76,7 @@ export const isTeamMember = async (
 
   if (!teamMember) {
     res.status(StatusCodes.FORBIDDEN).json({
-      message: "해당 팀의 멤버만 접근할 수 있습니다.",
+      message: TEAMS_CONSTANTS.INVITATION.ERROR_MESSAGES.NOT_TEAM_MEMBER,
     });
     return;
   }
