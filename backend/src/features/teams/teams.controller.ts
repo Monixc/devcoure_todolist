@@ -14,4 +14,17 @@ const createTeam = async (req: Request, res: Response) => {
   });
 };
 
-export { createTeam };
+
+const inviteTeam = async (req: Request, res: Response) => {
+  const {teamId} = req.params;
+  const {invitedUserId } = req.body;
+  const invitedBy = req.user;
+
+  const invitation = await teamsService.inviteTeam(Number(teamId), invitedUserId, invitedBy);
+
+  res.status(StatusCodes.CREATED).json({
+    invitation,
+  });
+};
+
+export { createTeam, inviteTeam };

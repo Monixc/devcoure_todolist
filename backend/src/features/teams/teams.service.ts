@@ -30,7 +30,69 @@ const createTeam = async (teamName: string, user: any) => {
   return { team, teamLeader };
 };
 
-const inviteMember = () => {};
+const inviteTeam = async ( teamId: number,
+  invitedUserId: string,
+  invitedBy: any) => {
+
+    const team = await prisma.teams.findUnique({
+      where: {id: teamId},
+    })
+
+    if(!team) {
+      throw new Error("팀을 찾을 수 없습니다");
+    }
+
+    const invitedUser = await prisma.users.findUnique({
+      where: {userId: invitedUserId},
+    })
+
+    if(!invitedUser) {
+      throw new Error("초대할 유저를 찾을 수 없습니다");
+    }
+
+    const isMember = await prisma.team_members.findFirst({
+      where: {
+        AND: [
+          { fk_team_id: teamId },
+          { fk_user_id: invitedUser.id }
+        ]
+      }
+    });
+
+    if(isMember ) {
+      throw new Error("이미 팀에 속한 유저입니다");
+    }
+
+  const existingInvitation = await prisma.team_invitations.findFirst({
+    where: {
+      fk_team_id: teamId,
+      fk_user_id: invitedUser.id,
+      status: 'pending',
+    },
+  });
+
+  if (existingInvitation) {
+    throw new Error("이미 초대가 진행중입니다.");
+  }
+
+
+  const expiresAt = new Date();
+  expiresAt.setHours(expiresAt.getHours() + 24);
+
+  const invitation = await prisma.team_invitations.create({
+    data: {
+      id: crypto.randomUUID(),
+      fk_team_id: teamId,
+      fk_invited_by: invitedBy.id,
+      fk_user_id: invitedUser.id,
+      role: 'member',
+      status: 'pending',
+      expires_at: expiresAt,
+    },
+  });
+
+  return invitation;
+};
 
 const acceptInvite = () => {};
 
@@ -46,7 +108,7 @@ const kickMember = () => {};
 
 export {
   createTeam,
-  inviteMember,
+  inviteTeam,
   acceptInvite,
   rejectInvite,
   leaveTeam,
