@@ -40,7 +40,7 @@ const acceptInvite = async (req: Request, res: Response) => {
   }
 
   try {
-    const result = await teamsService.acceptInvite(inviteId);
+    const result = await teamsService.acceptInvite(inviteId, user.userId);
     res.status(StatusCodes.OK).json(result);
   } catch (error: any) {
     res.status(StatusCodes.BAD_REQUEST).json({
@@ -61,14 +61,14 @@ const rejectInvite = async (req: Request, res: Response) => {
   }
 
   try {
-    const result = await teamsService.rejectInvite(inviteId);
+    const result = await teamsService.rejectInvite(inviteId, user.userId);
     res.status(StatusCodes.OK).json(result);
   } catch (error: any) {
     res.status(StatusCodes.BAD_REQUEST).json({
       message: error.message
     });
   }
-}
+};
 
 const leaveTeam = async (req: Request, res: Response) => {
   const { teamId } = req.params;
