@@ -106,14 +106,20 @@ const inviteTeam = async (
   return invitation;
 };
 
-const acceptInvite = async (inviteId: string) => {
+const acceptInvite = async (inviteId: string, userId: string) => {
   const invitation = await prisma.team_invitations.findUnique({
     where: { id: inviteId },
- 
+    include: {
+      users_team_invitations_fk_user_idTousers: true
+    }
   });
 
   if (!invitation || invitation.status !== 'pending') {
     throw new Error('유효하지 않은 초대입니다.');
+  }
+
+  if (invitation.users_team_invitations_fk_user_idTousers.userId !== userId) {
+    throw new Error('초대받은 사용자가 아닙니다.');
   }
 
   return await prisma.$transaction([
@@ -134,16 +140,21 @@ const acceptInvite = async (inviteId: string) => {
   ]);
 };
 
-const rejectInvite = async (inviteId: string) => {
+const rejectInvite = async (inviteId: string, userId: string) => {
   const invitation = await prisma.team_invitations.findUnique({
     where: { id: inviteId },
-
+    include: {
+      users_team_invitations_fk_user_idTousers: true
+    }
   });
 
   if (!invitation || invitation.status !== 'pending') {
     throw new Error('유효하지 않은 초대입니다.');
   }
 
+  if (invitation.users_team_invitations_fk_user_idTousers.userId !== userId) {
+    throw new Error('초대받은 사용자가 아닙니다.');
+  }
 
   return await prisma.team_invitations.update({
     where: { id: inviteId },
