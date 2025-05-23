@@ -40,7 +40,7 @@ const acceptInvite = async (req: Request, res: Response) => {
   }
 
   try {
-    const result = await teamsService.acceptInvite(inviteId, user.userId);
+    const result = await teamsService.acceptInvite(inviteId);
     res.status(StatusCodes.OK).json(result);
   } catch (error: any) {
     res.status(StatusCodes.BAD_REQUEST).json({
@@ -61,7 +61,7 @@ const rejectInvite = async (req: Request, res: Response) => {
   }
 
   try {
-    const result = await teamsService.rejectInvite(inviteId, user.userId);
+    const result = await teamsService.rejectInvite(inviteId);
     res.status(StatusCodes.OK).json(result);
   } catch (error: any) {
     res.status(StatusCodes.BAD_REQUEST).json({
@@ -123,10 +123,10 @@ const updateTeam = async (req: Request, res: Response) => {
 };
 
 const kickMember = async (req: Request, res: Response) => {
-  const { teamId, userId } = req.params;
+  const { teamId, memberId } = req.params;
   
   try {
-    await teamsService.kickMember(Number(teamId), userId);
+    await teamsService.kickMember(Number(teamId), Number(memberId));
     res.status(StatusCodes.OK).json({
       message: "멤버가 추방되었습니다.",
     });

@@ -12,6 +12,6 @@ teamsRouter.post("/invitations/:inviteId/reject", authMiddleware, teamsControlle
 teamsRouter.post("/:teamId/leave", authMiddleware, teamsController.leaveTeam);
 teamsRouter.delete("/:teamId", authMiddleware, isTeamLeader, teamsController.deleteTeam);
 teamsRouter.patch("/:teamId", authMiddleware, isTeamLeader, teamsController.updateTeam);
-teamsRouter.delete("/:teamId/members/:userId", authMiddleware, isTeamLeader, teamsController.kickMember);
+teamsRouter.delete("/:teamId/members/:memberId", authMiddleware, isTeamLeader, teamsController.kickMember);
 
 export default teamsRouter;

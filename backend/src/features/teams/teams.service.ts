@@ -106,20 +106,14 @@ const inviteTeam = async (
   return invitation;
 };
 
-const acceptInvite = async (inviteId: string, userId: string) => {
+const acceptInvite = async (inviteId: string) => {
   const invitation = await prisma.team_invitations.findUnique({
     where: { id: inviteId },
-    include: {
-      users_team_invitations_fk_user_idTousers: true  
-    }
+ 
   });
 
   if (!invitation || invitation.status !== 'pending') {
     throw new Error('유효하지 않은 초대입니다.');
-  }
-
-  if (invitation.users_team_invitations_fk_user_idTousers.userId !== userId) {
-    throw new Error('초대받은 사용자가 아닙니다.');
   }
 
   return await prisma.$transaction([
@@ -140,22 +134,16 @@ const acceptInvite = async (inviteId: string, userId: string) => {
   ]);
 };
 
-const rejectInvite = async (inviteId: string, userId: string) => {
+const rejectInvite = async (inviteId: string) => {
   const invitation = await prisma.team_invitations.findUnique({
     where: { id: inviteId },
-    include: {
-      users_team_invitations_fk_user_idTousers: true
-    }
+
   });
 
   if (!invitation || invitation.status !== 'pending') {
     throw new Error('유효하지 않은 초대입니다.');
   }
 
-
-  if (invitation.users_team_invitations_fk_user_idTousers.userId !== userId) {
-    throw new Error('초대받은 사용자가 아닙니다.');
-  }
 
   return await prisma.team_invitations.update({
     where: { id: inviteId },
@@ -233,10 +221,9 @@ const updateTeam = async (teamId: number, teamName: string) => {
   });
 };
 
-const kickMember = async (teamId: number, userId: string) => {
-  // 유저 아이디 기준으로 추방 수행해야 함
-  const user = await prisma.users.findUnique({
-    where: { userId }
+const kickMember = async (teamId: number, memberId: number) => {
+  const user = await prisma.team_members.findUnique({
+    where: { id: memberId, fk_team_id: teamId }
   });
 
   if (!user) {
@@ -247,7 +234,7 @@ const kickMember = async (teamId: number, userId: string) => {
   const teamMember = await prisma.team_members.findFirst({
     where: {
       fk_team_id: teamId,
-      fk_user_id: user.id
+      fk_user_id: user.fk_user_id
     }
   });
 
@@ -260,7 +247,7 @@ const kickMember = async (teamId: number, userId: string) => {
   }
 
   return await prisma.team_members.delete({
-    where: { id: teamMember.id }
+    where: { id: memberId }
   });
 };
 
