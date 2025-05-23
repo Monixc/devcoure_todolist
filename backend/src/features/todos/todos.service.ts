@@ -1,12 +1,18 @@
 import { prisma } from "../../config/db";
+import { TODOS_CONSTANTS } from "../../constants/todos.constants";
+import type { CreateTodoDto, UpdateTodoDto } from "../../types/todos.types";
 
-const createPersonalTodo = async (title: string, userId: string) => {
+
+const createPersonalTodo = async (
+  { title }: CreateTodoDto, 
+  userId: string
+) => {
   const user = await prisma.users.findUnique({
     where: { userId },
   });
 
   if (!user) {
-    throw new Error("사용자를 찾을 수 없습니다.");
+    throw new Error(TODOS_CONSTANTS.ERROR_MESSAGES.UNAUTHORIZED);
   }
 
   return await prisma.personal_todos.create({
@@ -23,7 +29,7 @@ const getPersonalTodos = async (userId: string) => {
   });
 
   if (!user) {
-    throw new Error("사용자를 찾을 수 없습니다.");
+    throw new Error(TODOS_CONSTANTS.ERROR_MESSAGES.UNAUTHORIZED);
   }
 
   return await prisma.personal_todos.findMany({
@@ -36,13 +42,17 @@ const getPersonalTodos = async (userId: string) => {
   });
 };
 
-const updatePersonalTodo = async (todoId: number, title: string, userId: string) => {
+const updatePersonalTodo = async (
+  todoId: number, 
+  { title }: UpdateTodoDto, 
+  userId: string
+) => {
   const user = await prisma.users.findUnique({
     where: { userId },
   });
 
   if (!user) {
-    throw new Error("사용자를 찾을 수 없습니다.");
+    throw new Error(TODOS_CONSTANTS.ERROR_MESSAGES.UNAUTHORIZED);
   }
 
   const todo = await prisma.personal_todos.findFirst({
@@ -53,7 +63,7 @@ const updatePersonalTodo = async (todoId: number, title: string, userId: string)
   });
 
   if (!todo) {
-    throw new Error("Todo를 찾을 수 없습니다.");
+    throw new Error(TODOS_CONSTANTS.ERROR_MESSAGES.TODO_NOT_FOUND);
   }
 
   return await prisma.personal_todos.update({
@@ -73,7 +83,7 @@ const deletePersonalTodo = async (todoId: number, userId: string) => {
   });
 
   if (!user) {
-    throw new Error("사용자를 찾을 수 없습니다.");
+    throw new Error(TODOS_CONSTANTS.ERROR_MESSAGES.UNAUTHORIZED);
   }
 
   const todo = await prisma.personal_todos.findFirst({
@@ -84,7 +94,7 @@ const deletePersonalTodo = async (todoId: number, userId: string) => {
   });
 
   if (!todo) {
-    throw new Error("Todo를 찾을 수 없습니다.");
+    throw new Error(TODOS_CONSTANTS.ERROR_MESSAGES.TODO_NOT_FOUND);
   }
 
   return await prisma.personal_todos.delete({
@@ -100,7 +110,7 @@ const togglePersonalTodoComplete = async (todoId: number, userId: string) => {
   });
 
   if (!user) {
-    throw new Error("사용자를 찾을 수 없습니다.");
+    throw new Error(TODOS_CONSTANTS.ERROR_MESSAGES.UNAUTHORIZED);
   }
 
   const todo = await prisma.personal_todos.findFirst({
@@ -111,7 +121,7 @@ const togglePersonalTodoComplete = async (todoId: number, userId: string) => {
   });
 
   if (!todo) {
-    throw new Error("Todo를 찾을 수 없습니다.");
+    throw new Error(TODOS_CONSTANTS.ERROR_MESSAGES.TODO_NOT_FOUND);
   }
 
   return await prisma.personal_todos.update({
@@ -125,7 +135,10 @@ const togglePersonalTodoComplete = async (todoId: number, userId: string) => {
   });
 };
 
-const createTeamTodo = async (title: string, teamId: number) => {
+const createTeamTodo = async (
+  { title }: CreateTodoDto, 
+  teamId: number
+) => {
   return await prisma.team_todos.create({
     data: {
       title,
@@ -145,7 +158,11 @@ const getTeamTodos = async (teamId: number) => {
   });
 };
 
-const updateTeamTodo = async (todoId: number, title: string, teamId: number) => {
+const updateTeamTodo = async (
+  todoId: number, 
+  { title }: UpdateTodoDto, 
+  teamId: number
+) => {
   const todo = await prisma.team_todos.findFirst({
     where: {
       id: todoId,
@@ -154,7 +171,7 @@ const updateTeamTodo = async (todoId: number, title: string, teamId: number) => 
   });
 
   if (!todo) {
-    throw new Error("Todo를 찾을 수 없습니다.");
+    throw new Error(TODOS_CONSTANTS.ERROR_MESSAGES.TODO_NOT_FOUND);
   }
 
   return await prisma.team_todos.update({
@@ -177,7 +194,7 @@ const deleteTeamTodo = async (todoId: number, teamId: number) => {
   });
 
   if (!todo) {
-    throw new Error("Todo를 찾을 수 없습니다.");
+    throw new Error(TODOS_CONSTANTS.ERROR_MESSAGES.TODO_NOT_FOUND);
   }
 
   return await prisma.team_todos.delete({
@@ -196,7 +213,7 @@ const toggleTeamTodoComplete = async (todoId: number, teamId: number) => {
   });
 
   if (!todo) {
-    throw new Error("Todo를 찾을 수 없습니다.");
+    throw new Error(TODOS_CONSTANTS.ERROR_MESSAGES.TODO_NOT_FOUND);
   }
 
   return await prisma.team_todos.update({
