@@ -2,8 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import {prisma} from "../../config/db";
 import { StatusCodes } from "http-status-codes";
 import { TEAMS_CONSTANTS } from "../../constants/teams.constants";
-import validateUser from "../../middlewares/validate-user";
-
+import validateUser from "../validation/user.middleware";
 
 export const isTeamLeader = async (
   req: Request,

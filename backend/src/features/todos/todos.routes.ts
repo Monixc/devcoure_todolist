@@ -1,8 +1,7 @@
 import express from "express";
 import * as todosController from "./todos.controller";
-import jwtAuthMiddleware from "../../middlewares/jwt.middleware";
-import { isTeamMember, isTeamLeader } from "../teams/team-auth.middleware";
-
+import jwtAuthMiddleware from "../../middlewares/auth/jwt.middleware";
+import { isTeamMember, isTeamLeader } from "../../middlewares/permissions/team-permission.middleware";
 const todosRouter = express.Router();
 
 

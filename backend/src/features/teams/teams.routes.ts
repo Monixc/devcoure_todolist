@@ -1,7 +1,7 @@
 import express from "express";
 import * as teamsController from "./teams.controller";
-import jwtAuthMiddleware from "../../middlewares/jwt.middleware";
-import { isTeamLeader, isTeamMember } from "./team-auth.middleware";
+import jwtAuthMiddleware from "../../middlewares/auth/jwt.middleware";
+import { isTeamLeader, isTeamMember } from "../../middlewares/permissions/team-permission.middleware";
 
 const teamsRouter = express.Router();
 
