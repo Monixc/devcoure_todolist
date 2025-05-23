@@ -106,61 +106,46 @@ const inviteTeam = async (
   return invitation;
 };
 
-const acceptInvite = async (
-  teamId: number,
-  invitationId: string,
-  userId: string
-) => {
+const acceptInvite = async (inviteId: string) => {
   const invitation = await prisma.team_invitations.findUnique({
-    where: { id: invitationId }
+    where: { id: inviteId }
   });
 
   if (!invitation || invitation.status !== 'pending') {
     throw new Error('유효하지 않은 초대입니다.');
   }
 
-  const invitedUser = await prisma.users.findUnique({
-    where: { userId }
-  });
-
-  if (!invitedUser) {
-    throw new Error('사용자를 찾을 수 없습니다.');
-  }
   return await prisma.$transaction([
     prisma.team_invitations.update({
-      where: { id: invitationId },
-      data: { status: 'accepted' }
+      where: { id: inviteId },
+      data: { 
+        status: 'accepted',
+        accepted_at: new Date()
+      }
     }),
     prisma.team_members.create({
       data: {
-        fk_team_id: teamId,
-        fk_user_id: invitedUser.id,
+        fk_team_id: invitation.fk_team_id,
+        fk_user_id: invitation.fk_user_id,
         role: 'member'
       }
     })
   ]);
 };
 
-const rejectInvite = async(teamId: number, inviteId: string, user: any) => {
-  const invitation = await prisma.team_invitations.findFirst({
-    where: {
-      id: inviteId,
-      fk_team_id: teamId,
-      fk_user_id: user.id,
-      status: "pending",
-    }
-  })
+const rejectInvite = async (inviteId: string) => {
+  const invitation = await prisma.team_invitations.findUnique({
+    where: { id: inviteId }
+  });
 
-  if(!invitation) {
-    throw new Error("유효하지 않은 초대입니다");
-
+  if (!invitation || invitation.status !== 'pending') {
+    throw new Error('유효하지 않은 초대입니다.');
   }
 
   return await prisma.team_invitations.update({
-    where: {id: inviteId},
-    data: {status: "rejected"}
-  })
- 
+    where: { id: inviteId },
+    data: { status: 'rejected' }
+  });
 };
 
 const leaveTeam = () => {};

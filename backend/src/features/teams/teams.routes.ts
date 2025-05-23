@@ -7,8 +7,8 @@ const teamsRouter = express.Router();
 
 teamsRouter.post("/", authMiddleware, teamsController.createTeam);
 teamsRouter.post("/:teamId/invite", authMiddleware, isTeamLeader, teamsController.inviteTeam);
-teamsRouter.post("/:teamId/invite/:inviteId/accept", authMiddleware, teamsController.acceptInvite);
-teamsRouter.post("/:teamId/invite/:inviteId/reject", authMiddleware, teamsController.rejectInvite);
+teamsRouter.post("/invitations/:inviteId/accept", authMiddleware, teamsController.acceptInvite);
+teamsRouter.post("/invitations/:inviteId/reject", authMiddleware, teamsController.rejectInvite);
 // teamsRouter.post("/:teamId/leave");
 // teamsRouter.delete("/:teamId");
 // teamsRouter.patch("/:teamId");
