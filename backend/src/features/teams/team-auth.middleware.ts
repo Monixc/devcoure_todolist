@@ -2,22 +2,8 @@ import { Request, Response, NextFunction } from "express";
 import {prisma} from "../../config/db";
 import { StatusCodes } from "http-status-codes";
 import { TEAMS_CONSTANTS } from "../../constants/teams.constants";
+import validateUser from "../../middlewares/validate-user";
 
-const validateUser = async (req: Request, res: Response) => {
-  const user = req.user;
-  
-  if(!user) {
-    return null;
-  }
-
-  const dbUser = await prisma.users.findUnique({
-    where: {
-     userId: user.userId
-    },
-  });
-
-  return dbUser;
-};
 
 export const isTeamLeader = async (
   req: Request,

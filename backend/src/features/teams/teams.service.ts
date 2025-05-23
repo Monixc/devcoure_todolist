@@ -306,6 +306,42 @@ const getTeamMembers = async (teamId: number) => {
   return team.team_members;
 };
 
+const getTeams = async (user: RequestUser) => {
+  const userInfo = await prisma.users.findUnique({
+    where: { userId: user.userId }
+  });
+
+  if (!userInfo) {
+    throw new Error(TEAMS_CONSTANTS.INVITATION.ERROR_MESSAGES.USER_NOT_FOUND);
+  }
+
+  const teams = await prisma.teams.findMany({
+    where: {
+      team_members: {
+        some: {
+          fk_user_id: userInfo.id
+        }
+      }
+    },
+    include: {
+      team_members: {
+        where: {
+          fk_user_id: userInfo.id
+        },
+        select: {
+          role: true
+        }
+      }
+    }
+  });
+
+  return teams.map(team => ({
+    ...team,
+    role: team.team_members[0].role,
+    team_members: undefined
+  }));
+};
+
 export {
   createTeam,
   inviteTeam,
@@ -316,4 +352,6 @@ export {
   updateTeam,
   kickMember,
   getTeamMembers,
+  getTeams
 };
+

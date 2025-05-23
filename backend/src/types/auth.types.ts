@@ -9,6 +9,10 @@ export interface User {
 
 export type UserWithoutPassword = Omit<User, "passwordHash">;
 
+export interface RequestUser {
+  userId: string;
+}
+
 export interface JoinUserDto {
   userId: string;
   password: string;

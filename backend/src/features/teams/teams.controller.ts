@@ -204,6 +204,30 @@ const getTeamMembers = async (req: Request, res: Response) => {
   }
 };
 
+const getTeams = async (req: Request, res: Response) => {
+  const user = req.user;
+
+  if (!user) {
+    res.status(StatusCodes.UNAUTHORIZED).json({
+      message: TEAMS_CONSTANTS.INVITATION.ERROR_MESSAGES.UNAUTHORIZED,
+    });
+    return;
+  }
+
+  try {
+    const teams = await teamsService.getTeams(user);
+    res.status(StatusCodes.OK).json({
+      teams,
+      message: TEAMS_CONSTANTS.INVITATION.MESSAGES.TEAMS_FETCHED,
+    });
+  } catch (error: any) {
+    res.status(StatusCodes.BAD_REQUEST).json({
+      message: error.message
+    });
+  }
+};
+
+
 export { 
   createTeam, 
   inviteTeam, 
@@ -213,5 +237,6 @@ export {
   deleteTeam, 
   updateTeam, 
   kickMember, 
-  getTeamMembers 
+  getTeamMembers,
+  getTeams
 };

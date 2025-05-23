@@ -1,10 +1,11 @@
 import { Request, Response, NextFunction } from "express";
 import { StatusCodes } from "http-status-codes";
 import jwt from "jsonwebtoken";
-import { prisma } from "../../config/db";
-import { AUTH_CONSTANTS } from "../../constants/auth.constants";
+import { prisma } from "../config/db";
+import { AUTH_CONSTANTS } from "../constants/auth.constants";
+import { JWT_CONFIG } from "../config/jwt.config";
 
-const authMiddleware = async (
+const jwtAuthMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -21,7 +22,7 @@ const authMiddleware = async (
   const token = authorization.split(" ")[1];
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as {
+    const decoded = jwt.verify(token, JWT_CONFIG.secret) as {
       id: string;
     };
 
@@ -50,4 +51,4 @@ const authMiddleware = async (
   }
 };
 
-export default authMiddleware;
+export default jwtAuthMiddleware;
