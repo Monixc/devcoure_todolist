@@ -1,43 +1,38 @@
 import styled from "styled-components";
 
 interface MainLayoutProps {
-  children: React.ReactNode;
+  sidebar: React.ReactNode;
+  main: React.ReactNode;
 }
 
-const Layout = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  flex-direction: column;
-
-  justify-content: center;
-  align-items: center;
-
-  box-sizing: border-box;
-  overflow: hidden;
-
-  background-color: rgb(255, 255, 255);
-`;
-
-const MainContent = styled.div`
-  display: flex;
-  width: 80%;
-  height: 100%;
-  justify-content: center;
-
-  gap: 32px;
-  background-color: rgb(151, 151, 151);
-  box-sizing: border-box;
-`;
-const MainLayout = ({ children }: MainLayoutProps) => {
+export const MainLayout = ({ sidebar, main }: MainLayoutProps) => {
   return (
-    <Layout>
-      <MainContent>{children}</MainContent>
-    </Layout>
+    <Container>
+      <SidebarWrapper>
+        {sidebar}
+      </SidebarWrapper>
+      <MainContent>
+        {main}
+      </MainContent>
+    </Container>
   );
 };
 
-export default MainLayout;
+const Container = styled.div`
+  display: flex;
+  width: 100%;
+  height: 90vh;
+  overflow: hidden;
+`;
+
+const SidebarWrapper = styled.aside`
+  flex-shrink: 0;
+  width: 265px;
+  margin-right: 32px;
+  height: 100%;
+`;
+
+const MainContent = styled.main`
+  flex: 1;  
+  height: 100%;
+`;
