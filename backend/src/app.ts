@@ -1,5 +1,5 @@
 import express from "express";
-import { connectDB } from "./config/db";
+import { connectDB } from "./config/db.config";
 import { securityMiddleware } from "./middlewares/security";
 import authRouter from "./features/auth/auth.routes";
 import teamsRouter from "./features/teams/teams.routes";

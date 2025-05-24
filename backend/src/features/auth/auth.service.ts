@@ -1,4 +1,4 @@
-import { prisma } from "../../config/db";
+import { prisma } from "../../config/db.config";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { AUTH_CONSTANTS } from "../../constants/auth.constants";

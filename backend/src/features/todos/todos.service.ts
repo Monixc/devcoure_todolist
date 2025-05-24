@@ -1,4 +1,4 @@
-import { prisma } from "../../config/db";
+import { prisma } from "../../config/db.config";
 import { TODOS_CONSTANTS } from "../../constants/todos.constants";
 import type { CreateTodoDto, UpdateTodoDto } from "../../types/todos.types";
 
