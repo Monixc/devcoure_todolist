@@ -6,6 +6,7 @@ import { useState } from "react";
 import { login } from "../../services/authApi";
 import { useNavigate } from "react-router-dom";
 
+
 export default function Login() {
   const [userId, setUserId] = useState("");
   const [password, setPassword] = useState("");
@@ -18,19 +19,20 @@ export default function Login() {
     setError("");
     setLoading(true);
     try {
-      const res = await login(userId, password);
-      if (res.data?.accessToken) {
+      const res = await login(userId, password); 
+      if (res.data.accessToken) {
         localStorage.setItem("accessToken", res.data.accessToken);
         navigate("/");
       } else {
         setError(res.message || "로그인 실패");
       }
     } catch (err: any) {
-      setError(err);
+      setError(err); 
     } finally {
       setLoading(false);
     }
   };
+  
 
   return (
     <CenterWrapper>
