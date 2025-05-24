@@ -26,5 +26,3 @@ export interface LoginUserDto {
 export interface RefreshTokenDto {
   refreshToken: string;
 }
-
-
