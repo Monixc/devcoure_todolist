@@ -7,3 +7,9 @@ declare module "express-serve-static-core" {
     };
   }
 }
+
+declare module "express" {
+  interface Request {
+    cookies: { [key: string]: string };
+  }
+}

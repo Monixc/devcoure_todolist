@@ -1,14 +1,20 @@
 import express from "express";
-import { connectDB } from "./config/db";
+import { connectDB } from "./config/db.config";
+import { securityMiddleware } from "./middlewares/security";
 import authRouter from "./features/auth/auth.routes";
 import teamsRouter from "./features/teams/teams.routes";
 import todosRouter from "./features/todos/todos.routes";
 
 const app = express();
 
+// 기본 미들웨어
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// 보안 미들웨어 적용
+app.use(securityMiddleware);
+
+// 라우터
 app.use("/auth", authRouter);
 app.use("/teams", teamsRouter);
 app.use("/todos", todosRouter);

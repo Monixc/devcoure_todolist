@@ -1,4 +1,4 @@
-import { prisma } from "../../config/db";
+import { prisma } from "../../config/db.config";
 import { TEAMS_CONSTANTS } from "../../constants/teams.constants";
 import type { 
   CreateTeamDto,

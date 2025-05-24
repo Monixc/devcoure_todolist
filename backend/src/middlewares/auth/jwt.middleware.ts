@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { StatusCodes } from "http-status-codes";
 import jwt from "jsonwebtoken";
-import { prisma } from "../../config/db";
+import { prisma } from "../../config/db.config";
 import { AUTH_CONSTANTS } from "../../constants/auth.constants";
 import { JWT_CONFIG } from "../../config/jwt.config";
 

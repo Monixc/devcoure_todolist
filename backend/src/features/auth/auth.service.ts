@@ -1,4 +1,4 @@
-import { prisma } from "../../config/db";
+import { prisma } from "../../config/db.config";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { AUTH_CONSTANTS } from "../../constants/auth.constants";
@@ -10,6 +10,8 @@ import type {
 import { validateEmail } from "./validators/email.validators";
 import { validatePassword } from "./validators/password.validators";
 import { JWT_CONFIG } from "../../config/jwt.config";
+import { SECURITY_CONFIG } from "../../config/security.config";
+import { Response, Request } from 'express';
 
 const joinUser = async ({
   userId,
@@ -45,7 +47,7 @@ const joinUser = async ({
   return userWithoutPassword;
 };
 
-const loginUser = async ({ userId, password }: LoginUserDto) => {
+const loginUser = async ({ userId, password }: LoginUserDto, res: Response) => {
   const user = await prisma.users.findUnique({
     where: { userId },
   });
@@ -76,16 +78,23 @@ const loginUser = async ({ userId, password }: LoginUserDto) => {
     data: { refresh_token: refreshToken },
   });
 
-  const { passwordHash: _, ...userWithoutPassword } = user;
+  res.cookie('refreshToken', refreshToken, SECURITY_CONFIG.cookie);
+
+  const { passwordHash: _, refresh_token: __, ...userWithoutPassword } = user;
 
   return {
-    user: userWithoutPassword,
-    accessToken,
-    refreshToken,
+    accessToken, 
+    user: userWithoutPassword
   };
 };
 
-const refresh = async ({ refreshToken }: RefreshTokenDto) => {
+const refresh = async (req: Request, res: Response) => {
+  const refreshToken = req.cookies.refreshToken;
+
+  if (!refreshToken) {
+    throw new Error(AUTH_CONSTANTS.ERROR_MESSAGES.INVALID_TOKEN);
+  }
+
   let payload: any;
   try {
     payload = jwt.verify(refreshToken, JWT_CONFIG.secret);
@@ -96,7 +105,7 @@ const refresh = async ({ refreshToken }: RefreshTokenDto) => {
   const user = await prisma.users.findUnique({
     where: { userId: payload.id },
   });
-  
+
   if (!user || user.refresh_token !== refreshToken) {
     throw new Error(AUTH_CONSTANTS.ERROR_MESSAGES.INVALID_TOKEN);
   }
@@ -114,14 +123,16 @@ const refresh = async ({ refreshToken }: RefreshTokenDto) => {
   );
 
   await prisma.users.update({
-    where: { userId : user.userId },
+    where: { userId: user.userId },
     data: { refresh_token: newRefreshToken },
   });
 
+  res.cookie('refreshToken', newRefreshToken, SECURITY_CONFIG.cookie);
+
   return {
-    accessToken: newAccessToken,
-    refreshToken: newRefreshToken,
+    accessToken: newAccessToken
   };
 };
+
 
 export { joinUser, loginUser, refresh };

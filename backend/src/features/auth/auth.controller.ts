@@ -48,7 +48,8 @@ const login = async (req: Request, res: Response) => {
       return;
     }
 
-    const user = await authService.loginUser({ userId, password });
+    const user = await authService.loginUser({ userId, password }, res);
+    
     res.status(StatusCodes.OK).json({
       success: true,
       data: user,
@@ -81,12 +82,22 @@ const login = async (req: Request, res: Response) => {
 
 const refresh = async (req: Request, res: Response) => {
   try {
-    const { refreshToken } = req.body;
-    const newTokens = await authService.refresh({ refreshToken });
+    const refreshToken = req.cookies?.refreshToken;
+    console.log('Received refresh token:', refreshToken);
+    
+    if (!refreshToken) {
+      res.status(StatusCodes.UNAUTHORIZED).json({
+        success: false,
+        message: AUTH_CONSTANTS.ERROR_MESSAGES.INVALID_TOKEN,
+      });
+      return;
+    }
+
+    const newAccessToken = await authService.refresh(req, res);
 
     res.status(StatusCodes.OK).json({
       success: true,
-      data: newTokens,
+      data: newAccessToken,
       message: AUTH_CONSTANTS.MESSAGES.TOKEN_REFRESHED,
     });
   } catch (error) {

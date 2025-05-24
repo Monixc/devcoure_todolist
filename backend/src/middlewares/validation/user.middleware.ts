@@ -1,4 +1,4 @@
-import { prisma } from "../../config/db";
+import { prisma } from "../../config/db.config";
 import { Request, Response } from "express";
 
 const validateUser = async (req: Request, res: Response) => {
