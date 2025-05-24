@@ -4,6 +4,8 @@ import { securityMiddleware } from "./middlewares/security";
 import authRouter from "./features/auth/auth.routes";
 import teamsRouter from "./features/teams/teams.routes";
 import todosRouter from "./features/todos/todos.routes";
+import swaggerUi from 'swagger-ui-express';
+import { swaggerSpec } from './config/swagger.config';
 
 const app = express();
 
@@ -13,6 +15,9 @@ app.use(express.urlencoded({ extended: true }));
 
 // 보안 미들웨어 적용
 app.use(securityMiddleware);
+
+// Swagger UI
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // 라우터
 app.use("/auth", authRouter);
