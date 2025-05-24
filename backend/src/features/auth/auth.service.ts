@@ -1,21 +1,22 @@
-import { StatusCodes } from "http-status-codes";
-import { prisma } from "../../config/db";
+import { prisma } from "../../config/db.config";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { AUTH_CONSTANTS } from "../../constants/auth.constants";
 import type {
   JoinUserDto,
-  UserWithoutPassword,
   LoginUserDto,
+  RefreshTokenDto,
 } from "../../types/auth.types";
 import { validateEmail } from "./validators/email.validators";
 import { validatePassword } from "./validators/password.validators";
+import { JWT_CONFIG } from "../../config/jwt.config";
+import { SECURITY_CONFIG } from "../../config/security.config";
+import { Response, Request } from 'express';
 
 const joinUser = async ({
   userId,
   password,
-}: JoinUserDto): Promise<UserWithoutPassword> => {
-  const { EMAIL } = AUTH_CONSTANTS;
+}: JoinUserDto) => {
 
   validateEmail(userId);
   validatePassword(password, userId);
@@ -25,12 +26,12 @@ const joinUser = async ({
   });
 
   if (existingUser) {
-    throw new Error(EMAIL.ERROR_MESSAGES.DUPLICATE_EMAIL);
+    throw new Error(AUTH_CONSTANTS.ERROR_MESSAGES.DUPLICATE_EMAIL);
   }
 
   const hashedPassword = await bcrypt.hash(
     password,
-    AUTH_CONSTANTS.SALT_ROUNDS
+    AUTH_CONSTANTS.PASSWORD.SALT_ROUNDS
   );
 
   const newUser = await prisma.users.create({
@@ -46,28 +47,30 @@ const joinUser = async ({
   return userWithoutPassword;
 };
 
-const loginUser = async ({ userId, password }: LoginUserDto) => {
+const loginUser = async ({ userId, password }: LoginUserDto, res: Response) => {
   const user = await prisma.users.findUnique({
     where: { userId },
   });
 
   if (!user) {
-    throw new Error(AUTH_CONSTANTS.LOGIN.ERROR_MESSAGES.USER_NOT_FOUND);
+    throw new Error(AUTH_CONSTANTS.ERROR_MESSAGES.USER_NOT_FOUND);
   }
 
   const isValidPassword = await bcrypt.compare(password, user.passwordHash);
   if (!isValidPassword) {
-    throw new Error(AUTH_CONSTANTS.LOGIN.ERROR_MESSAGES.INVALID_CREDENTIALS);
+    throw new Error(AUTH_CONSTANTS.ERROR_MESSAGES.INVALID_PASSWORD);
   }
 
-  const accessToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET!, {
-    expiresIn: AUTH_CONSTANTS.TOKEN_EXPIRY,
-  } as jwt.SignOptions);
+  const accessToken = jwt.sign(
+    { id: user.userId },
+    JWT_CONFIG.secret,
+    JWT_CONFIG.options.access
+  );
 
   const refreshToken = jwt.sign(
-    { id: user.id },
-    process.env.JWT_REFRESH_SECRET!,
-    { expiresIn: AUTH_CONSTANTS.REFRESH_TOKEN_EXPIRY } as jwt.SignOptions
+    { id: user.userId },
+    JWT_CONFIG.secret,
+    JWT_CONFIG.options.refresh
   );
 
   await prisma.users.update({
@@ -75,49 +78,61 @@ const loginUser = async ({ userId, password }: LoginUserDto) => {
     data: { refresh_token: refreshToken },
   });
 
-  const { passwordHash: _, ...userWithoutPassword } = user;
+  res.cookie('refreshToken', refreshToken, SECURITY_CONFIG.cookie);
+
+  const { passwordHash: _, refresh_token: __, ...userWithoutPassword } = user;
 
   return {
-    user: userWithoutPassword,
-    accessToken,
-    refreshToken,
+    accessToken, 
+    user: userWithoutPassword
   };
 };
 
-const refresh = async (refreshToken: string) => {
+const refresh = async (req: Request, res: Response) => {
+  const refreshToken = req.cookies.refreshToken;
+
+  if (!refreshToken) {
+    throw new Error(AUTH_CONSTANTS.ERROR_MESSAGES.INVALID_TOKEN);
+  }
+
   let payload: any;
   try {
-    payload = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET!);
+    payload = jwt.verify(refreshToken, JWT_CONFIG.secret);
   } catch (error) {
-    throw new Error("유효하지 않은 리프레시 토큰");
+    throw new Error(AUTH_CONSTANTS.ERROR_MESSAGES.INVALID_TOKEN);
   }
 
   const user = await prisma.users.findUnique({
-    where: { id: payload.id },
+    where: { userId: payload.id },
   });
+
   if (!user || user.refresh_token !== refreshToken) {
-    throw new Error("유효하지 않은 리프레시 토큰");
+    throw new Error(AUTH_CONSTANTS.ERROR_MESSAGES.INVALID_TOKEN);
   }
 
-  const newAccessToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET!, {
-    expiresIn: AUTH_CONSTANTS.TOKEN_EXPIRY,
-  } as jwt.SignOptions);
+  const newAccessToken = jwt.sign(
+    { id: user.userId },
+    JWT_CONFIG.secret,
+    JWT_CONFIG.options.access
+  );
 
   const newRefreshToken = jwt.sign(
-    { id: user.id },
-    process.env.JWT_REFRESH_SECRET!,
-    { expiresIn: AUTH_CONSTANTS.REFRESH_TOKEN_EXPIRY } as jwt.SignOptions
+    { id: user.userId },
+    JWT_CONFIG.secret,
+    JWT_CONFIG.options.refresh
   );
 
   await prisma.users.update({
-    where: { id: user.id },
+    where: { userId: user.userId },
     data: { refresh_token: newRefreshToken },
   });
 
+  res.cookie('refreshToken', newRefreshToken, SECURITY_CONFIG.cookie);
+
   return {
-    accessToken: newAccessToken,
-    refreshToken: newRefreshToken,
+    accessToken: newAccessToken
   };
 };
+
 
 export { joinUser, loginUser, refresh };

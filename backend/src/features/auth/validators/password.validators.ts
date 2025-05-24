@@ -4,25 +4,25 @@ export const validatePassword = (password: string, email: string): void => {
   const { PASSWORD } = AUTH_CONSTANTS;
 
   if (password.length < PASSWORD.MIN_LENGTH) {
-    throw new Error(PASSWORD.ERROR_MESSAGES.TOO_SHORT);
+    throw new Error(AUTH_CONSTANTS.ERROR_MESSAGES.PASSWORD_TOO_SHORT);
   }
 
   if (!PASSWORD.REGEX.HAS_LETTER.test(password)) {
-    throw new Error(PASSWORD.ERROR_MESSAGES.NO_LETTER);
+    throw new Error(AUTH_CONSTANTS.ERROR_MESSAGES.PASSWORD_NO_LETTER);
   }
 
   if (!PASSWORD.REGEX.HAS_NUMBER.test(password)) {
-    throw new Error(PASSWORD.ERROR_MESSAGES.NO_NUMBER);
+    throw new Error(AUTH_CONSTANTS.ERROR_MESSAGES.PASSWORD_NO_NUMBER);
   }
   if (!PASSWORD.REGEX.HAS_SPECIAL.test(password)) {
-    throw new Error(PASSWORD.ERROR_MESSAGES.NO_SPECIAL);
+    throw new Error(AUTH_CONSTANTS.ERROR_MESSAGES.PASSWORD_NO_SPECIAL);
   }
 
   if (email && password.includes(email)) {
-    throw new Error(PASSWORD.ERROR_MESSAGES.CONTAINS_EMAIL);
+    throw new Error(AUTH_CONSTANTS.ERROR_MESSAGES.PASSWORD_CONTAINS_EMAIL);
   }
 
-  if (PASSWORD.REGEX.EMAIL_PATTERN.test(password)) {
-    throw new Error(PASSWORD.ERROR_MESSAGES.CONTAINS_EMAIL);
+  if (AUTH_CONSTANTS.EMAIL.EMAIL_REGEX.test(password)) {
+    throw new Error(AUTH_CONSTANTS.ERROR_MESSAGES.PASSWORD_CONTAINS_EMAIL);
   }
 };

@@ -1,25 +1,28 @@
-// 사용자 관련 타입
 export interface User {
   id: number;
   userId: string;
   passwordHash: string;
-  created_at: Date;
-  updated_at?: Date;
+  created_at: Date | null;
+  updated_at: Date | null;
+  refresh_token: string | null;
 }
 
 export type UserWithoutPassword = Omit<User, "passwordHash">;
 
-// 회원가입 DTO
+export interface RequestUser {
+  userId: string;
+}
+
 export interface JoinUserDto {
   userId: string;
   password: string;
 }
 
-// 로그인 DTO
 export interface LoginUserDto {
   userId: string;
   password: string;
 }
 
-// 서비스 응답 타입
-export type ServiceResponse<T> = Promise<T>;
+export interface RefreshTokenDto {
+  refreshToken: string;
+}
