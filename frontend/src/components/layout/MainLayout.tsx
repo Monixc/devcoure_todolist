@@ -30,6 +30,7 @@ const SidebarWrapper = styled.aside`
   width: 265px;
   margin-right: 32px;
   height: 100%;
+  position: relative;
 `;
 
 const MainContent = styled.main`

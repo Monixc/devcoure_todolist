@@ -19,6 +19,7 @@ import {
   getTeamInvitations,
   deleteInvitation
 } from "../../services/teamApi";
+import { Button } from "../common/Button";
 
 interface Team {
   id: number;
@@ -30,7 +31,19 @@ interface Invitation {
   teamName: string;
 }
 
-export const Sidebar = () => {
+interface SidebarProps {
+  onSelectPersonal: () => void;
+  onSelectTeam: (teamId: number) => void;
+  activeType: "personal" | "team";
+  activeTeamId: number | null;
+}
+
+export const Sidebar = ({
+  onSelectPersonal,
+  onSelectTeam,
+  activeType,
+  activeTeamId
+}: SidebarProps) => {
   const [teams, setTeams] = useState<Team[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newTeamName, setNewTeamName] = useState("");
@@ -216,12 +229,13 @@ export const Sidebar = () => {
 
   return (
     <Container>
-      <PersonalTodoButton />
+      <PersonalTodoButton active={activeType === "personal"} onClick={onSelectPersonal} />
       {error && <div style={{ color: colors.red[500], fontSize: 14 }}>{error}</div>}
       <ListSection
         title="내 팀 목록"
-        items={teams.map(t => ({ id: t.id, name: t.teamName }))}
+        items={teams.map(t => ({ id: t.id, name: t.teamName, active: activeType === "team" && activeTeamId === t.id }))}
         onMenuOpen={teamMenu.openMenu}
+        onSelectTeam={id => onSelectTeam(Number(id))}
         buttonText="팀 만들기"
         onButtonClick={() => setIsModalOpen(true)}
       />
@@ -229,6 +243,7 @@ export const Sidebar = () => {
         title="초대받은 목록"
         items={invitations.map(i => ({ id: i.id, name: i.teamName }))}
         onMenuOpen={inviteMenu.openMenu}
+        onSelectTeam={() => {}}
       />
       <CreateTeamModal
         isOpen={isModalOpen}
@@ -266,6 +281,18 @@ export const Sidebar = () => {
         items={inviteMenuItems}
         onClose={inviteMenu.closeMenu}
       />
+      <LogoutButton>
+      <Button
+        variant="red-outlined"
+        size="full"
+        onClick={() => {
+          localStorage.removeItem("accessToken");
+          window.location.href = "/login";
+        }}
+      >
+        로그아웃
+      </Button>
+      </LogoutButton>
     </Container>
   );
 };
@@ -279,6 +306,15 @@ const Container = styled.div`
     border-right: 1px solid ${colors.gray[400]};
     height: 100vh;
     background-color: white;
+    overflow-y: auto;
 `;
 
+const LogoutButton = styled.div`
+    position: absolute;
+    width: 240px;
+    left: 0;
+    bottom: 0;
+    background: white;
+    padding-top: 8px;
+`;
 
