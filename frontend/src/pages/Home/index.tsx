@@ -18,8 +18,12 @@ export type Todo = {
 type SelectedType = "personal" | "team";
 
 export default function Home() {
-  const [selectedType, setSelectedType] = useState<SelectedType>("personal");
-  const [selectedTeamId, setSelectedTeamId] = useState<number | null>(null);
+  const userId = localStorage.getItem("currentUserId") ?? "default";
+
+  const lastType = localStorage.getItem(`lastSelectedType_${userId}`);
+  const lastTeamId = localStorage.getItem(`lastSelectedTeamId_${userId}`);
+  const [selectedType, setSelectedType] = useState<SelectedType>(lastType === "team" ? "team" : "personal");
+  const [selectedTeamId, setSelectedTeamId] = useState<number | null>(lastType === "team" && lastTeamId ? Number(lastTeamId) : null);
   const [todos, setTodos] = useState<Todo[]>([]);
   const [editId, setEditId] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
@@ -47,10 +51,14 @@ export default function Home() {
   const handleSelectPersonal = () => {
     setSelectedType("personal");
     setSelectedTeamId(null);
+    localStorage.setItem(`lastSelectedType_${userId}`, "personal");
+    localStorage.removeItem(`lastSelectedTeamId_${userId}`);
   };
   const handleSelectTeam = (teamId: number) => {
     setSelectedType("team");
     setSelectedTeamId(teamId);
+    localStorage.setItem(`lastSelectedType_${userId}`, "team");
+    localStorage.setItem(`lastSelectedTeamId_${userId}`, String(teamId));
   };
 
   useEffect(() => {
