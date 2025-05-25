@@ -43,7 +43,6 @@ export default function Home() {
     }
   }, []);
 
-  // 개인/팀 선택 핸들러 (Sidebar에서 prop으로 내려받는다고 가정)
   const handleSelectPersonal = () => {
     setSelectedType("personal");
     setSelectedTeamId(null);
@@ -53,7 +52,6 @@ export default function Home() {
     setSelectedTeamId(teamId);
   };
 
-  // 선택 변경 시 투두 fetch
   useEffect(() => {
     fetchTodos(selectedType, selectedTeamId);
   }, [selectedType, selectedTeamId, fetchTodos]);
