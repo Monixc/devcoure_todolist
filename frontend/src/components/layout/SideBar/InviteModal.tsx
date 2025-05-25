@@ -5,17 +5,17 @@ import { FiTrash2 } from "react-icons/fi";
 import styled from "styled-components";
 import { colors } from "../../../styles/tokens/colors";
 
-interface Props {
+interface InviteModalProps {
   isOpen: boolean;
   inviteInput: string;
-  invitedMembers: string[];
+  invitedMembers: { id: string; userId: string }[];
   onInputChange: (v: string) => void;
   onInvite: () => void;
-  onRemoveInvited: (name: string) => void;
+  onRemoveInvited: (inviteId: string) => void;
   onClose: () => void;
 }
 
-export const InviteModal = ({ isOpen, inviteInput, invitedMembers, onInputChange, onInvite, onRemoveInvited, onClose }: Props) => (
+export const InviteModal = ({ isOpen, inviteInput, invitedMembers, onInputChange, onInvite, onRemoveInvited, onClose }: InviteModalProps) => (
   <Modal
     isOpen={isOpen}
     onConfirm={onClose}
@@ -35,20 +35,19 @@ export const InviteModal = ({ isOpen, inviteInput, invitedMembers, onInputChange
         variant="slate-filled"
         size="sm"
         onClick={onInvite}
-        style={{ marginLeft: 8 }}
       >
         초대
       </Button>
     </InviteRow>
     <InviteList>
-      {invitedMembers.map(name => (
-        <InviteItem key={name}>
-          <span>{name}</span>
+      {invitedMembers.map(member => (
+        <InviteItem key={member.id}>
+          <span>{member.userId}</span>
           <FiTrash2
             size={18}
             color={colors.red[500]}
             style={{ cursor: "pointer" }}
-            onClick={() => onRemoveInvited(name)}
+            onClick={() => onRemoveInvited(member.id)}
           />
         </InviteItem>
       ))}

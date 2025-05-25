@@ -4,8 +4,8 @@ import styled from "styled-components";
 
 interface ListSectionProps {
   title: string;
-  items: { id: number; name: string }[];
-  onMenuOpen: (e: React.MouseEvent, id: number) => void;
+  items: { id: string | number; name: string }[];
+  onMenuOpen: (e: React.MouseEvent, id: string | number) => void;
   buttonText?: string;
   onButtonClick?: () => void;
 }

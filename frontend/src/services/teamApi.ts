@@ -21,16 +21,6 @@ export async function createTeam(teamName: string) {
   }
 }
 
-// 초대받은 목록 조회 
-export async function fetchInvitations() {
-  try {
-    const res = await api.get("/teams/invitations");
-    return res.data.invitations;
-  } catch (err) {
-    throw extractErrorMessage(err);
-  }
-}
-
 // 팀 초대 보내기
 export async function inviteToTeam(teamId: number, invitedUserId: string) {
   try {
@@ -105,6 +95,37 @@ export async function fetchTeamMembers(teamId: number) {
 export async function kickTeamMember(teamId: number, memberId: number) {
   try {
     const res = await api.delete(`/teams/${teamId}/members/${memberId}`);
+    return res.data;
+  } catch (err) {
+    throw extractErrorMessage(err);
+  }
+}
+
+// 초대받은 목록 조회 
+export async function fetchInvitations() {
+    try {
+      const res = await api.get("/teams/invitations");
+      return res.data.invitations;
+    } catch (err) {
+      throw extractErrorMessage(err);
+    }
+  }
+
+  
+// 팀별 초대한 멤버 목록 조회
+export async function getTeamInvitations(teamId: number) {
+  try {
+    const res = await api.get(`/teams/${teamId}/invitations`);
+    return res.data.invitations;
+  } catch (err) {
+    throw extractErrorMessage(err);
+  }
+}
+
+// 초대 삭제(취소)
+export async function deleteInvitation(inviteId: string) {
+  try {
+    const res = await api.delete(`/teams/invitations/${inviteId}`);
     return res.data;
   } catch (err) {
     throw extractErrorMessage(err);
