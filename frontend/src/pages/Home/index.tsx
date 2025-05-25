@@ -1,12 +1,13 @@
 import styled from "styled-components";
 import { MainLayout } from "../../components/layout/MainLayout";
-import { Sidebar } from "../../components/layout/SideBar/SideBar";
+import { Sidebar } from "../../components/layout/SideBar";
 import { TodoInput } from "./__componentes/TodoInput";
 import { useState, useEffect, useCallback } from "react";
 import TodoItem from "./__componentes/TodoItem/TodoItem";
 import { colors } from "../../styles/tokens/colors";
 import * as todoApi from "../../services/todoApi";
 import { EmptyMessage } from "../../components/common/EmptyMessage";
+
 
 export type Todo = {
   id: number;
