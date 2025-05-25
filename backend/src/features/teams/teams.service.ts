@@ -355,6 +355,25 @@ const getInvitations = async (userId: string) => {
   });
 };
 
+const getTeamInvitations = async (teamId: number) => {
+  return await prisma.team_invitations.findMany({
+    where: { fk_team_id: teamId, status: "pending" },
+    include: {
+      users_team_invitations_fk_user_idTousers: { 
+        select: { userId: true }
+      }
+    },
+    orderBy: { created_at: "desc" }
+  });
+};
+
+const deleteInvitation = async (inviteId: string) => {
+  return await prisma.team_invitations.delete({
+    where: { id: inviteId }
+  });
+};
+
+
 export {
   createTeam,
   inviteTeam,
@@ -366,6 +385,8 @@ export {
   kickMember,
   getTeamMembers,
   getTeams,
-  getInvitations
+  getInvitations,
+  getTeamInvitations,
+  deleteInvitation
 };
 
