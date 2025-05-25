@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { MainLayout } from "../../components/layout/MainLayout";
-import { Sidebar } from "../../components/layout/SideBar";
+import { Sidebar } from "../../components/layout/SideBar/SideBar";
 import { TodoInput } from "./__componentes/TodoInput";
 import { useState, useEffect, useCallback } from "react";
 import TodoItem from "./__componentes/TodoItem/TodoItem";

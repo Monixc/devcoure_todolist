@@ -1,5 +1,5 @@
-import { Modal } from "../../common/Modal";
-import { TextField } from "../../common/TextField";
+import { Modal } from "../../../common/Modal";
+import { TextField } from "../../../common/TextField";
 
 interface Props {
   isOpen: boolean;

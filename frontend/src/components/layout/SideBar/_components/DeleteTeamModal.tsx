@@ -1,4 +1,4 @@
-import { Modal } from "../../common/Modal";
+import { Modal } from "../../../common/Modal";
 
 interface Props {
   isOpen: boolean;

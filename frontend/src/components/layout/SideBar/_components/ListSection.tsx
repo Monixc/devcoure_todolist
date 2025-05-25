@@ -1,7 +1,7 @@
-import { colors } from "../../../styles/tokens/colors";
-import { Button } from "../../common/Button";
+import { colors } from "../../../../styles/tokens/colors";
+import { Button } from "../../../common/Button";
 import styled from "styled-components";
-import { EmptyMessage } from "../../common/EmptyMessage";
+import { EmptyMessage } from "../../../common/EmptyMessage";
 
 interface ListSectionProps {
   title: string;

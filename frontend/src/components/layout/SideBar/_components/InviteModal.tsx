@@ -1,9 +1,9 @@
-import { Modal } from "../../common/Modal";
-import { TextField } from "../../common/TextField";
-import { Button } from "../../common/Button";
+import { Modal } from "../../../common/Modal";
+import { TextField } from "../../../common/TextField";
+import { Button } from "../../../common/Button";
 import { FiTrash2 } from "react-icons/fi";
 import styled from "styled-components";
-import { colors } from "../../../styles/tokens/colors";
+import { colors } from "../../../../styles/tokens/colors";
 
 interface InviteModalProps {
   isOpen: boolean;

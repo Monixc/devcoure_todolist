@@ -1,13 +1,13 @@
 import styled from "styled-components";
-import { PopupMenu } from "../common/PopupMenu";
-import { colors } from "../../styles/tokens/colors";
+import { PopupMenu } from "../../common/PopupMenu";
+import { colors } from "../../../styles/tokens/colors";
 import { useState, useEffect } from "react";
-import { PersonalTodoButton } from "./SideBar/PersonalTodoButton";
-import { ListSection } from "./SideBar/ListSection";
-import { CreateTeamModal } from "./SideBar/CreateTeamModal";
-import { InviteModal } from "./SideBar/InviteModal";
-import { DeleteTeamModal } from "./SideBar/DeleteTeamModal";
-import { usePopupMenu } from "../../hooks/usePopupMenu";
+import { PersonalTodoButton } from "./_components/PersonalTodoButton";
+import { ListSection } from "./_components/ListSection";
+import { CreateTeamModal } from "./_components/CreateTeamModal";
+import { InviteModal } from "./_components/InviteModal";
+import { DeleteTeamModal } from "./_components/DeleteTeamModal";
+import { usePopupMenu } from "../../../hooks/usePopupMenu";
 import {
   fetchMyTeams,
   createTeam,
@@ -18,8 +18,8 @@ import {
   deleteTeam,
   getTeamInvitations,
   deleteInvitation
-} from "../../services/teamApi";
-import { Button } from "../common/Button";
+} from "../../../services/teamApi";
+import { Button } from "../../common/Button";
 
 interface Team {
   id: number;
