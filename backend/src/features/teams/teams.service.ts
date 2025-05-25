@@ -342,6 +342,19 @@ const getTeams = async (user: RequestUser) => {
   }));
 };
 
+const getInvitations = async (userId: string) => {
+  const user = await prisma.users.findUnique({ where: { userId } });
+  if (!user) throw new Error(TEAMS_CONSTANTS.INVITATION.ERROR_MESSAGES.USER_NOT_FOUND);
+
+  return await prisma.team_invitations.findMany({
+    where: { fk_user_id: user.id, status: "pending" },
+    include: {
+      teams: { select: { id: true, teamName: true } }
+    },
+    orderBy: { created_at: "desc" }
+  });
+};
+
 export {
   createTeam,
   inviteTeam,
@@ -352,6 +365,7 @@ export {
   updateTeam,
   kickMember,
   getTeamMembers,
-  getTeams
+  getTeams,
+  getInvitations
 };
 

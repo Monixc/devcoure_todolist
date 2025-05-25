@@ -14,6 +14,7 @@ teamsRouter.delete("/:teamId", jwtAuthMiddleware, isTeamLeader, teamsController.
 teamsRouter.patch("/:teamId", jwtAuthMiddleware, isTeamLeader, teamsController.updateTeam);
 teamsRouter.delete("/:teamId/members/:memberId", jwtAuthMiddleware, isTeamLeader, teamsController.kickMember);
 teamsRouter.get("/:teamId/members", jwtAuthMiddleware, isTeamMember, teamsController.getTeamMembers);
+teamsRouter.get("/invitations", jwtAuthMiddleware, teamsController.getInvitations);
 
 /**
  * @swagger

@@ -227,6 +227,22 @@ const getTeams = async (req: Request, res: Response) => {
   }
 };
 
+const getInvitations = async (req: Request, res: Response) => {
+  const user = req.user;
+  if (!user) {
+     res.status(StatusCodes.UNAUTHORIZED).json({
+      message: TEAMS_CONSTANTS.INVITATION.ERROR_MESSAGES.UNAUTHORIZED,
+    });
+    return;
+  }
+  try {
+    const invitations = await teamsService.getInvitations(user.userId);
+    res.status(200).json({ invitations });
+  } catch (error: any) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
 
 export { 
   createTeam, 
@@ -238,5 +254,6 @@ export {
   updateTeam, 
   kickMember, 
   getTeamMembers,
-  getTeams
+  getTeams,
+  getInvitations
 };
