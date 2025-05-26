@@ -342,6 +342,38 @@ const getTeams = async (user: RequestUser) => {
   }));
 };
 
+const getInvitations = async (userId: string) => {
+  const user = await prisma.users.findUnique({ where: { userId } });
+  if (!user) throw new Error(TEAMS_CONSTANTS.INVITATION.ERROR_MESSAGES.USER_NOT_FOUND);
+
+  return await prisma.team_invitations.findMany({
+    where: { fk_user_id: user.id, status: "pending" },
+    include: {
+      teams: { select: { id: true, teamName: true } }
+    },
+    orderBy: { created_at: "desc" }
+  });
+};
+
+const getTeamInvitations = async (teamId: number) => {
+  return await prisma.team_invitations.findMany({
+    where: { fk_team_id: teamId, status: "pending" },
+    include: {
+      users_team_invitations_fk_user_idTousers: { 
+        select: { userId: true }
+      }
+    },
+    orderBy: { created_at: "desc" }
+  });
+};
+
+const deleteInvitation = async (inviteId: string) => {
+  return await prisma.team_invitations.delete({
+    where: { id: inviteId }
+  });
+};
+
+
 export {
   createTeam,
   inviteTeam,
@@ -352,6 +384,9 @@ export {
   updateTeam,
   kickMember,
   getTeamMembers,
-  getTeams
+  getTeams,
+  getInvitations,
+  getTeamInvitations,
+  deleteInvitation
 };
 

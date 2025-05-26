@@ -11,6 +11,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     size?: ButtonSize;
     hasIcon?: boolean;
     onIconClick?: (e: React.MouseEvent) => void;
+    active?: boolean;
 }
 
 export const Button = ({
@@ -19,6 +20,7 @@ export const Button = ({
     size = 'sm',
     hasIcon,
     onIconClick,
+    active,
     ...props
 }: ButtonProps) => {
     const handleIconClick = (e: React.MouseEvent) => {
@@ -30,6 +32,7 @@ export const Button = ({
         <ButtonContainer
             $variant={variant}
             $size={size}
+            $active={active}
             {...props}
         >
             <span>{children}</span>
@@ -120,6 +123,7 @@ const getButtonStyles = (variant: ButtonVariant) => {
 const ButtonContainer = styled.button<{
     $variant: ButtonVariant;
     $size: ButtonSize;
+    $active?: boolean;
 }>`
     display: flex;
     align-items: center;
@@ -137,6 +141,10 @@ const ButtonContainer = styled.button<{
 
     ${props => getButtonSize(props.$size)}
     ${props => getButtonStyles(props.$variant)}
+    ${({ $active }) => $active && `
+        background-color: ${colors.gray[900]};
+        color: white;
+    `}
 `;
 const IconWrapper = styled.span`
     margin-left: 4px;

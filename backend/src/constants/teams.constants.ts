@@ -25,6 +25,7 @@ export const TEAMS_CONSTANTS = {
             TEAM_MEMBERS_FETCHED: '팀 멤버가 조회되었습니다.',
             TEAM_UPDATED: '팀이 수정되었습니다.',
             TEAMS_FETCHED: '가입한 팀 목록이 조회되었습니다.',
+            INVITATION_DELETED: '초대가 삭제되었습니다.'
         }
     }
 } as const;

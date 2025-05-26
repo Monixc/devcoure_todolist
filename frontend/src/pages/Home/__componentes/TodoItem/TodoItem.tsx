@@ -19,7 +19,7 @@ export default function TodoItem({
   if (isEdit && !done) {
     return (
       <TodoItemEdit
-        value={todo.text}
+        value={todo.title}
         onSubmit={onEdit!}
         onCancel={onCancelEdit!}
       />
@@ -27,8 +27,8 @@ export default function TodoItem({
   }
   return (
     <TodoItemView
-      checked={todo.checked}
-      label={todo.text}
+      checked={todo.isCompleted}
+      label={todo.title}
       onCheck={onCheck}
       onEdit={done ? undefined : onEditClick}
       onDelete={onDelete}

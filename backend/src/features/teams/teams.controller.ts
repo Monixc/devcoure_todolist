@@ -227,7 +227,41 @@ const getTeams = async (req: Request, res: Response) => {
   }
 };
 
+const getInvitations = async (req: Request, res: Response) => {
+  const user = req.user;
+  if (!user) {
+     res.status(StatusCodes.UNAUTHORIZED).json({
+      message: TEAMS_CONSTANTS.INVITATION.ERROR_MESSAGES.UNAUTHORIZED,
+    });
+    return;
+  }
+  try {
+    const invitations = await teamsService.getInvitations(user.userId);
+    res.status(StatusCodes.OK).json({ invitations });
+  } catch (error: any) {
+    res.status(StatusCodes.BAD_REQUEST).json({ message: error.message });
+  }
+};
 
+const getTeamInvitations = async (req: Request, res: Response) => {
+  const { teamId } = req.params;
+  try {
+    const invitations = await teamsService.getTeamInvitations(Number(teamId));
+    res.status(StatusCodes.OK).json({ invitations });
+  } catch (error: any) {
+    res.status(StatusCodes.BAD_REQUEST).json({ message: error.message });
+  }
+};
+
+const deleteInvitation = async (req: Request, res: Response) => {
+  const { inviteId } = req.params;
+  try {
+    await teamsService.deleteInvitation(inviteId);
+    res.status(StatusCodes.OK).json({ message: TEAMS_CONSTANTS.INVITATION.MESSAGES.INVITATION_DELETED });
+  } catch (error: any) {
+    res.status(StatusCodes.BAD_REQUEST).json({ message: error.message });
+  }
+};
 export { 
   createTeam, 
   inviteTeam, 
@@ -238,5 +272,8 @@ export {
   updateTeam, 
   kickMember, 
   getTeamMembers,
-  getTeams
+  getTeams,
+  getInvitations,
+  getTeamInvitations,
+  deleteInvitation
 };
